@@ -47,7 +47,11 @@ TipoRet IN(TDirectorio &sistema, char *nombreArchivo, char *texto);
 TipoRet DF(TDirectorio &sistema, char *nombreArchivo, char *cantidad);
 TipoRet TYPE(TDirectorio &sistema, char *nombreArchivo);
 TipoRet DESTRUIRSISTEMA(TDirectorio &sistema);
-
+TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio);
+TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio);
+TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio);
+TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino);
+TipoRet DIR(TDirectorio &sistema, Cadena parametroDir);
 // programa principal
 
 int main()
@@ -55,8 +59,10 @@ int main()
     char restoLinea[MAX_LINEA + 1];
     char comando[MAX_PALABRA];
     char parametro[MAX_PALABRA];
+    char parametroDir[MAX_PARAMETRODIR];
     char texto[MAX_PALABRA];
     char nombrearchivo[MAX_NOMBRE];
+    char nombreDirectorio[MAX_NOMBRE];
     char cantidad[MAX_PALABRA];
     // char parametro;
     TDirectorio sistema;
@@ -92,8 +98,30 @@ int main()
             leerChars(cantidad);
         }
         else if (!strcmp(comando, "TYPE"))
+        {
             leerChars(nombrearchivo);
-        
+        }
+        else if (!strcmp(comando, "CD"))
+        {
+            leerChars(nombreDirectorio);
+        }
+        else if (!strcmp(comando, "MKDIR"))
+        {
+            leerChars(nombreDirectorio);
+        }
+        else if (!strcmp(comando, "RMDIR"))
+        {
+            leerChars(nombreDirectorio);
+        }
+        else if (!strcmp(comando, "MOVE"))
+        {
+            leerChars(nombrearchivo);
+            leerChars(nombreDirectorio);
+        }
+        else if (!strcmp(comando, "DIR"))
+        {
+            leerRestoLinea(parametroDir);
+        }
         // *********************** Procesamiento de comandos ***********************************
 
         if (0 == strcmp(comando, "CREARSISTEMA"))
@@ -208,6 +236,81 @@ int main()
             if (sistemaInicializado)
             {
                 TipoRet salida = TYPE(sistema, nombrearchivo);
+                if (salida == OK)
+                    printf("\nOK\n\n");
+                else if (salida == NO_IMPLEMENTADA)
+                    printf("NO_IMPLEMENTADA\n\n");
+            }
+            else
+            {
+                printf("\nEL SISTEMA NO FUE INICIALIZADO\n\n");
+            }
+        }
+        else if (0 == strcmp(comando, "CD"))
+        {
+            if (sistemaInicializado)
+            {
+                TipoRet salida = CD(sistema, nombreDirectorio);
+                if (salida == OK)
+                    printf("\nOK\n\n");
+                else if (salida == NO_IMPLEMENTADA)
+                    printf("NO_IMPLEMENTADA\n\n");
+            }
+            else
+            {
+                printf("\nEL SISTEMA NO FUE INICIALIZADO\n\n");
+            }
+        }
+        else if (0 == strcmp(comando, "MKDIR"))
+        {
+            if (sistemaInicializado)
+            {
+                TipoRet salida = MKDIR(sistema, nombreDirectorio);
+                if (salida == OK)
+                    printf("\nOK\n\n");
+                else if (salida == NO_IMPLEMENTADA)
+                    printf("NO_IMPLEMENTADA\n\n");
+            }
+            else
+            {
+                printf("\nEL SISTEMA NO FUE INICIALIZADO\n\n");
+            }
+        }
+        else if (0 == strcmp(comando, "RMDIR"))
+        {
+            if (sistemaInicializado)
+            {
+                TipoRet salida = RMDIR(sistema, nombreDirectorio);
+                if (salida == OK)
+                    printf("\nOK\n\n");
+                else if (salida == NO_IMPLEMENTADA)
+                    printf("NO_IMPLEMENTADA\n\n");
+            }
+            else
+            {
+                printf("\nEL SISTEMA NO FUE INICIALIZADO\n\n");
+            }
+        }
+        else if (0 == strcmp(comando, "MOVE"))
+        {
+            if (sistemaInicializado)
+            {
+                TipoRet salida = MOVE(sistema, nombrearchivo, nombreDirectorio);
+                if (salida == OK)
+                    printf("\nOK\n\n");
+                else if (salida == NO_IMPLEMENTADA)
+                    printf("NO_IMPLEMENTADA\n\n");
+            }
+            else
+            {
+                printf("\nEL SISTEMA NO FUE INICIALIZADO\n\n");
+            }
+        }
+        else if (0 == strcmp(comando, "DIR"))
+        {
+            if (sistemaInicializado)
+            {
+                TipoRet salida = DIR(sistema, parametroDir);
                 if (salida == OK)
                     printf("\nOK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
@@ -431,4 +534,48 @@ TipoRet DESTRUIRSISTEMA(TDirectorio &sistema)
 {
     destroyDirectory(sistema);
     return OK;
+}
+
+TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
+{
+    return NO_IMPLEMENTADA;
+}
+
+TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
+{
+    return NO_IMPLEMENTADA;
+}
+
+TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
+{
+    return NO_IMPLEMENTADA;
+}
+
+TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
+{
+    return NO_IMPLEMENTADA;
+}
+
+TipoRet DIR(TDirectorio &sistema, Cadena parametroDir)
+{
+
+    if (strlen(parametroDir) > 0)
+    {
+        for (int ind = 0; parametroDir[ind] != '\0'; ++ind)
+        {
+            parametroDir[ind] = parametroDir[ind + 1];
+        }
+    }
+
+    if (strcmp(parametroDir, "/S") == 0)
+    {
+        printf("DIR CON PARAMETRO\n");
+        printf("PARAMETRO: \"%s\"\n", parametroDir);
+    }
+    else
+    {
+        printf("DIR SIN PARAMETRO\n");
+    }
+
+    return NO_IMPLEMENTADA;
 }
