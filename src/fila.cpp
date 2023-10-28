@@ -22,34 +22,34 @@ struct _rep_fila
 // Pos-condición crea una fila vacía.
 TFila createRow()
 {
-    return nullptr;
+    return NULL;
 }
 
 // Pos-Condición retorna true si la fila es vacía.
 bool isEmptyRow(TFila fila)
 {
-    return fila == nullptr;
+    return fila == NULL;
 }
 
-TLinea copyLine(TLinea linea)
-{
-    TLinea newLine = createLine();
-    while (!isEmptyLine(linea))
-    {
-        insertCharLine(firstCharLine(linea), newLine);
-        linea = nextLine(linea);
-    }
-    return newLine;
-}
+// TLinea copyLine(TLinea linea)
+// {
+//     TLinea newLine = createLine();
+//     while (!isEmptyLine(linea))
+//     {
+//         insertCharLine(firstCharLine(linea), newLine);
+//         linea = nextLine(linea);
+//     }
+//     return newLine;
+// }
 
 // Pos-Condición Inserta una nueva fila al principio de "fila"
 void insertRow(TFila &fila, TLinea linea)
 {
     TFila newFila = new _rep_fila;
-    newFila->elemento = copyLine(linea); // Para testear por uso compartido de memoria
+    newFila->elemento = linea;
     newFila->sig = fila;
     fila = newFila;
-    newFila = nullptr;
+    newFila = NULL;
 }
 
 // pre-condicion: fila !=NULL
@@ -70,10 +70,10 @@ TFila nextRow(TFila fila)
 // elimina el ultimo nodo de la fila "fila"
 void deleteLastRow(TFila &fila)
 {
-    if (fila->sig != nullptr) // Tiene mas de un nodo
+    if (fila->sig != NULL) // Tiene mas de un nodo
     {
         TFila auxMenosUno = fila;
-        while (auxMenosUno->sig->sig != nullptr)
+        while (auxMenosUno->sig->sig != NULL)
         {
             auxMenosUno = auxMenosUno->sig;
         }
@@ -101,10 +101,10 @@ void deleteLastRow(TFila &fila)
 // Elimina toda la memoria de la fila "fila"
 void deleteRows(TFila &fila)
 {
-    if (fila != nullptr)
+    if (fila != NULL)
     {
 
-        while (fila->sig != nullptr)
+        while (fila->sig != NULL)
         {
             TFila auxDelete = fila;
             fila = auxDelete->sig;
@@ -139,7 +139,7 @@ void modifyRow(TFila &fila, Cadena caracteres)
             largo--;
         }
 
-        aux = nullptr;
-        auxL = nullptr;
+        aux = NULL;
+        auxL = NULL;
     }
 }

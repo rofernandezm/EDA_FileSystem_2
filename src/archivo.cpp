@@ -47,18 +47,18 @@ bool haveWritePermission(TArchivo archivo)
 // retorna true si archivo no tiene filas;
 bool isEmptyFile(TArchivo archivo)
 {
-    return archivo->fila == nullptr;
+    return archivo->fila == NULL;
 }
 
 // Retorna un puntero a la primer Fila de archivo
 TLinea getFirstLine(TArchivo archivo)
 {
-    TLinea rtn = nullptr;
-    if (archivo->fila != nullptr)
+    TLinea rtn = NULL;
+    if (archivo->fila != NULL)
     {
         TFila firstRow = firstRowFile(archivo);
         rtn = headRow(firstRow);
-        firstRow = nullptr;
+        firstRow = NULL;
     }
     return rtn;
 }
@@ -67,7 +67,7 @@ TLinea getFirstLine(TArchivo archivo)
 TFila getNextRow(TArchivo archivo)
 {
     TFila rtn;
-    if (archivo->fila != nullptr)
+    if (archivo->fila != NULL)
     {
         rtn = nextRow(firstRowFile(archivo));
     }
@@ -85,7 +85,7 @@ int getCountRow(TArchivo archivo)
         fila = nextRow(fila);
         rtn++;
     }
-    fila = nullptr;
+    fila = NULL;
     return rtn;
 }
 
@@ -122,7 +122,7 @@ void printLineFile(TArchivo archivo, int numero_linea)
     }
 
     TLinea currentLine = nextLine(headRow(currentRow));
-    while (currentLine != nullptr)
+    while (currentLine != NULL)
     {
         printf("%c", firstCharLine(currentLine));
         currentLine = nextLine(currentLine);
@@ -137,7 +137,7 @@ void deleteCharterFile(TArchivo &archivo, int cant)
     if (cant >= countChars)
     {
         TFila auxFirstRow = firstRowFile(archivo);
-        archivo->fila = nullptr;
+        archivo->fila = NULL;
         deleteRows(auxFirstRow);
     }
     else
@@ -167,8 +167,8 @@ void deleteCharterFile(TArchivo &archivo, int cant)
                     diff--;
                 }
             }
-            currentLine = nullptr;
-            lastRow = nullptr;
+            currentLine = NULL;
+            lastRow = NULL;
         }
     }
 }
@@ -176,7 +176,7 @@ void deleteCharterFile(TArchivo &archivo, int cant)
 // Cambia el nombre del archivo "archivo" por nuevoNombre
 void setName(TArchivo &archivo, Cadena nuevoNombre)
 {
-    if (archivo->name == nullptr)
+    if (archivo->name == NULL)
     {
         archivo->name = new char[strlen(nuevoNombre)];
     }
@@ -186,7 +186,7 @@ void setName(TArchivo &archivo, Cadena nuevoNombre)
 // Cambia la extension del "archivo" por nuevaExtension
 void setExtension(TArchivo &archivo, Cadena nuevaExtension)
 {
-    if (archivo->ext == nullptr)
+    if (archivo->ext == NULL)
     {
         archivo->ext = new char[strlen(nuevaExtension)];
     }
@@ -209,8 +209,8 @@ void insertChartsFirstRow(TArchivo &archivo, Cadena texto)
         largo--;
     }
 
-    auxL = nullptr;
-    textCopy = nullptr;
+    auxL = NULL;
+    textCopy = NULL;
 }
 
 // si valor == true se le asigna el permiso de escritura de "archivo"
@@ -224,12 +224,12 @@ void setWritePermission(TArchivo &archivo, bool valor)
 // elimina toda la memoria utilizada por "archivo"
 void destroyFile(TArchivo &archivo)
 {
-    if (archivo != nullptr)
+    if (archivo != NULL)
     {
         TArchivo aux = archivo;
         deleteRows(aux->fila);
         delete aux;
-        archivo = nullptr;
+        archivo = NULL;
     }
 }
 
@@ -259,6 +259,6 @@ void insertChartsNewRow(TArchivo &archivo, Cadena texto)
         largo--;
     }
 
-    newLine = nullptr;
-    auxL = nullptr;
+    newLine = NULL;
+    auxL = NULL;
 }

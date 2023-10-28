@@ -18,7 +18,7 @@ struct _rep_linea
 TLinea createLine() // CELDA DUMMY
 {
     TLinea newLinea = new _rep_linea;
-    newLinea->sig = nullptr;
+    newLinea->sig = NULL;
     return newLinea; // changed
 }
 
@@ -26,7 +26,7 @@ TLinea createLine() // CELDA DUMMY
 bool isEmptyLine(TLinea linea)
 {
     bool rtn = false;
-    if (linea == nullptr || (linea->elemento == '\0' && linea->sig == nullptr))
+    if (linea == NULL || (linea->elemento == '\0' && linea->sig == NULL))
     {
         rtn = true;
     }
@@ -49,7 +49,7 @@ void insertCharLine(char letra, TLinea &linea)
     newLinea->elemento = letra;
     newLinea->sig = linea->sig;
     linea->sig = newLinea;
-    newLinea = nullptr;
+    newLinea = NULL;
 }
 
 // pre-condición linea != NULL
@@ -63,7 +63,7 @@ char firstCharLine(TLinea linea) // CONTROLAR ANTES EL AVANCE DE CELDA DUMMY
 int countNodesLine(TLinea linea)
 { // Verifica desde primer nodo (dummy)
     int rtn;
-    if (linea == nullptr)
+    if (linea == NULL)
     {
         rtn = 0;
     }
@@ -109,5 +109,5 @@ void destroyLine(TLinea &linea)
         destroyLine(linea->sig);
         delete linea;
     }
-    linea = nullptr;
+    linea = NULL;
 }

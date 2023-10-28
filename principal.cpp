@@ -93,7 +93,7 @@ int main()
         }
         else if (!strcmp(comando, "TYPE"))
             leerChars(nombrearchivo);
-
+        
         // *********************** Procesamiento de comandos ***********************************
 
         if (0 == strcmp(comando, "CREARSISTEMA"))
@@ -327,7 +327,7 @@ TipoRet IF(TDirectorio &sistema, Cadena nombreArchivo, Cadena texto)
             {
                 deleteCharsFile(sistema, nombreArchivo, diff);
             }
-            file = nullptr;
+            file = NULL;
             salida = OK;
         }
         else
@@ -360,7 +360,7 @@ TipoRet IN(TDirectorio &sistema, Cadena nombreArchivo, Cadena texto)
             {
                 deleteCharsFile(sistema, nombreArchivo, diff);
             }
-            file = nullptr;
+            file = NULL;
             salida = OK;
         }
         else

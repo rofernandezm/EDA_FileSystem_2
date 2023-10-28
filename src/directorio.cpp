@@ -33,16 +33,16 @@ TDirectorio createRootDirectory()
     // Set the memory to the "name" pointer
     root->name = new char[strlen("RAIZ")];
     root->name = strcpy(root->name, "RAIZ");
-    root->padre = nullptr;
-    root->hijo = nullptr;
-    root->archivos = nullptr;
+    root->padre = NULL;
+    root->hijo = NULL;
+    root->archivos = NULL;
     return root;
 }
 
 // retorna true si el directorio "directorio" no tiene archivos
 bool isEmptyDirectory(TDirectorio directorio)
 {
-    return directorio->archivos == nullptr; // LArchivo archivos;
+    return directorio->archivos == NULL; // LArchivo archivos;
 }
 
 // pos-condicion: retorna true si el archivo de nombre "nombreArchivo existe en la lista de archivos "archivos".
@@ -140,7 +140,7 @@ TFila getLastRow(TArchivo archivo)
     while (!isEmptyRow(nextRow(rtn)))
     {
         TLinea curr = nextLine(headRow(rtn));
-        while (curr != nullptr)
+        while (curr != NULL)
         {
             curr = nextLine(curr);
         }
@@ -156,7 +156,7 @@ void insertTextFile(TDirectorio &directorio, Cadena nombreArchivo, Cadena texto)
     TArchivo archivo = getFileDirectory(directorio, nombreArchivo);
 
     insertChartsNewRow(archivo, texto);
-    archivo = nullptr;
+    archivo = NULL;
 }
 
 // pre condicion: el archivo nombreArchivo existe en directorio
@@ -202,7 +202,7 @@ void deleteCharsFile(TDirectorio &directorio, Cadena nombreArchivo, int cantidad
     {
         deleteCharterFile(archivo, cantidad);
     }
-    archivo = nullptr;
+    archivo = NULL;
 }
 
 // pre-condicion: existe el archivo de nombre "nombreArchivo" en el directorio "directorio"
@@ -211,7 +211,7 @@ void setFilePermission(TDirectorio &directorio, Cadena nombreArchivo, bool permi
 {
     TArchivo file = getFileDirectory(directorio, nombreArchivo);
     setWritePermission(file, permisoEscritura);
-    file = nullptr;
+    file = NULL;
 }
 
 // pre-condicion: existe el archivo de nombre "nombreArchivo" en el directorio "directorio"
