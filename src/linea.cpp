@@ -92,7 +92,7 @@ void deleteFirstChar(TLinea &linea) // Asumimos linea completa (empieza por dumm
 void deleteLastChar(TLinea &linea)
 {
     TLinea auxMenosUno = linea;
-    while (!isEmptyLine(linea->sig->sig))
+    while (!isEmptyLine(auxMenosUno->sig->sig))
     {
         auxMenosUno = auxMenosUno->sig;
     }
