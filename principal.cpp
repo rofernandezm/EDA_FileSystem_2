@@ -543,7 +543,29 @@ TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
 
 TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 {
-    return NO_IMPLEMENTADA;
+
+    TipoRet salida;
+    if (!strcmp(nombreDirectorio, "RAIZ") == 0)
+
+    {
+        if (!existChildrenDirectory(sistema, nombreDirectorio))
+        {
+            createChildrenDirectory(sistema, nombreDirectorio);
+            salida = OK;
+        }
+        else
+        {
+            // IMPRIMIR DETALLE ERROR, YA EXISTE
+            salida = ERROR;
+        }
+    }
+    else
+    {
+        // IMPRIMIR DETALLE ERROR, NOMBREDIR = RAIZ
+
+        salida = ERROR;
+    }
+    return salida;
 }
 
 TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
@@ -569,8 +591,9 @@ TipoRet DIR(TDirectorio &sistema, Cadena parametroDir)
 
     if (strcmp(parametroDir, "/S") == 0)
     {
-        printf("DIR CON PARAMETRO\n");
-        printf("PARAMETRO: \"%s\"\n", parametroDir);
+        printDirectoryDirS(sistema);
+        // printf("DIR CON PARAMETRO\n");
+        //  printf("PARAMETRO: \"%s\"\n", parametroDir);
     }
     else
     {

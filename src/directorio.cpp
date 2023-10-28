@@ -18,10 +18,12 @@ struct _list_archivo
 struct _rep_directorio
 {
     Cadena name;
-    TDirectorio padre;
-    TDirectorio hijo;
+    TDirectorio father;       // padre
+    TDirectorio firstSibling; // primerHijo
+    TDirectorio nextBrother;  // siguiente hermano
     TDirectorio raiz;
     LArchivos archivos;
+    TDirectorio currentDirectory;
 };
 
 // Crea el directorio de nombre Raíz del filesystem
@@ -33,16 +35,19 @@ TDirectorio createRootDirectory()
     // Set the memory to the "name" pointer
     root->name = new char[strlen("RAIZ")];
     root->name = strcpy(root->name, "RAIZ");
-    root->padre = NULL;
-    root->hijo = NULL;
+    root->father = NULL;
+    root->firstSibling = NULL;
     root->archivos = NULL;
+    root->nextBrother = NULL;
+    root->currentDirectory = root;
     return root;
 }
 
 // retorna true si el directorio "directorio" no tiene archivos
 bool isEmptyDirectory(TDirectorio directorio)
 {
-    return directorio->archivos == NULL; // LArchivo archivos;
+    bool rtn = directorio->archivos == NULL && directorio->firstSibling == NULL && directorio->nextBrother == NULL;
+    return rtn; // LArchivo archivos;
 }
 
 // pos-condicion: retorna true si el archivo de nombre "nombreArchivo existe en la lista de archivos "archivos".
@@ -246,80 +251,144 @@ void destroyDirectory(TDirectorio &directorio)
 {
     if (directorio != NULL)
     {
-        if (directorio->hijo == NULL)
+        if (directorio->firstSibling == NULL)
         {
             destroyTArchivos(directorio->archivos);
         }
         else
         {
-            destroyDirectory(directorio->hijo);
+            destroyDirectory(directorio->firstSibling);
         }
     }
 }
 
-
-
 //******************************Nuevas funciones *****************************************************************
 
+// retorna true si el directorio de nombre nombreDierctorioHijo es hijo del directorio "directorio"
+bool existChildrenDirectory(TDirectorio directorio, Cadena nombreDirectorioHijo)
+{
 
-//retorna true si el directorio de nombre nombreDierctorioHijo es hijo del directorio "directorio"
-bool existChildrenDirectory(TDirectorio directorio, Cadena nombreDirectorioHijo);
+    bool rtn = false;
+    TDirectorio hijo = directorio->firstSibling;
 
+    while (hijo != NULL && strcmp(hijo->name, nombreDirectorioHijo) != 0)
+    {
+        hijo = hijo->nextBrother;
+    }
 
-//pre-condición el directorio de nombre nombreDirectorioHijo es hijo del directorio Directorio
-//pos-condición retorna un puntero al directorio de nombre nombreDirectorioHijo
-TDirectorio moveChildrenDirectory (TDirectorio& directorio, Cadena nombreDirectorioHijo);
+    if (hijo != NULL)
+    {
+        rtn = true;
+    }
 
+    return rtn;
+}
 
-//retorna un puntero de TDirectorio al padre del directorio directorio
-TDirectorio moveFatherDirectory (TDirectorio& directorio);
+// pre-condición el directorio de nombre nombreDirectorioHijo es hijo del directorio Directorio
+// pos-condición retorna un puntero al directorio de nombre nombreDirectorioHijo
+TDirectorio moveChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorioHijo){
+    
+        TDirectorio hijo = directorio->firstSibling;
+        while (strcmp(hijo->name, nombreDirectorioHijo) != 0)
+        {
+            hijo = hijo->nextBrother;
+        }
+        directorio->currentDirectory = hijo;
+        return hijo;
+        
+    
+}
 
+// retorna un puntero de TDirectorio al padre del directorio directorio
+TDirectorio moveFatherDirectory(TDirectorio &directorio){
+    return directorio->father;
+}
 
-//retorna un puntero de TDirectorio al directorio ROOT
-TDirectorio moveRootDirectory (TDirectorio& directorio);
+// retorna un puntero de TDirectorio al directorio ROOT
+TDirectorio moveRootDirectory(TDirectorio &directorio){
+    return directorio->raiz;
+}
 
+// retorna true si el directorio directorio es root
+bool isRootDirectory(TDirectorio directorio)
+{
+    bool rtn = false;
 
-//retorna true si el directorio directorio es root
-bool isRootDirectory (TDirectorio directorio);
+    if (strcmp(directorio->name, "RAIZ") == 0)
+    {
+        rtn = true;
+    }
 
+    return rtn;
+}
 
-//Pre-Condición del directorio de nombre nombreDirectorio no es hijo del directorio "directorio"
-//pos-condición crea un directorio vacío, de nombre nombreDirectorio, hijo del directorio "directorio"
-void createChildrenDirectory (TDirectorio& directorio, Cadena nombreDirectorio);
+// Pre-Condición del directorio de nombre nombreDirectorio no es hijo del directorio "directorio"
+// pos-condición crea un directorio vacío, de nombre nombreDirectorio, hijo del directorio "directorio"
+void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio){
 
+    TDirectorio nuevo = new _rep_directorio;
+    nuevo->name = nombreDirectorio;
+    nuevo->firstSibling = NULL;
+    nuevo->father = directorio;
+    nuevo->nextBrother = NULL;
+    TDirectorio iter = directorio->firstSibling;
 
-//pre-condición el directorio de nombre nombreDirectorio es hijo del directorio directorio
-//pos-condición elimina el directorio de nombre nombreDirectorio que es hijo del directorio directorio
-//eliminando toda su memoria
-void removeChildrenDirectory (TDirectorio& directorio, Cadena nombreDirectorio);
+    if(!isEmptyDirectory(directorio)){
 
+    if(strcmp(iter->name, nombreDirectorio) > 0){
+        nuevo->nextBrother = directorio->firstSibling;
+        directorio->firstSibling = nuevo;
 
-//pre-condición el directorio origen es sub-directorio del directorio "directorio"
-//pos-condición mueve el directorio origen y todo su contenido al directorio destino
-void moveSubDirectory (TDirectorio& directorio, TDirectorio origen, TDirectorio& destino);
+    }else{
 
+        while(iter->nextBrother != NULL && strcmp(iter->nextBrother->name, nombreDirectorio) > 0){
+            iter = iter->nextBrother;
+        }
+            nuevo->nextBrother = iter->nextBrother;
+            iter->nextBrother = nuevo;
+    }
+    }else{
+        directorio->firstSibling = nuevo;
+    }
+    iter = NULL;
+    nuevo = NULL;
+    
+}
 
-//pre-condición el archivo origen es sub archivo del directorio directorio
-//pos-condición se mueve el archivo TArchivo como hijo del directorio destino
-void moveSubArchive (TDirectorio& directorio, TArchivo origen, TDirectorio destino);
+// pre-condición el directorio de nombre nombreDirectorio es hijo del directorio directorio
+// pos-condición elimina el directorio de nombre nombreDirectorio que es hijo del directorio directorio
+// eliminando toda su memoria
+void removeChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio);
 
+// pre-condición el directorio origen es sub-directorio del directorio "directorio"
+// pos-condición mueve el directorio origen y todo su contenido al directorio destino
+void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &destino);
 
-//pre-condición: directorio no es el directorio ROOT
-//pos-condición: retorna un puntero al primer hermano del diretorio "directorio"
+// pre-condición el archivo origen es sub archivo del directorio directorio
+// pos-condición se mueve el archivo TArchivo como hijo del directorio destino
+void moveSubArchive(TDirectorio &directorio, TArchivo origen, TDirectorio destino);
+
+// pre-condición: directorio no es el directorio ROOT
+// pos-condición: retorna un puntero al primer hermano del diretorio "directorio"
 TDirectorio firstBrotherDirectory(TDirectorio directorio);
 
-
-//pos-condición: retorna un puntero al primer hijo del directorio "directorio"
+// pos-condición: retorna un puntero al primer hijo del directorio "directorio"
 TDirectorio firstChildrenDirectory(TDirectorio directorio);
 
+// Retorna true si el directorio subdir es sub-directorio del directorio "directorio" en cualquier nivel.
+bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta);
 
-//Retorna true si el directorio subdir es sub-directorio del directorio "directorio" en cualquier nivel.
-bool isSubDirectoryRoot (TDirectorio directorio, Cadena ruta);
+// pos-condición imprime el directorio ejecuando DIR
+void printDirectoryDir(TDirectorio directorio);
 
+// pos-condición imprime el directorio ejecutando DIR /S
+void printDirectoryDirS(TDirectorio directorio){
+    if(!isEmptyDirectory(directorio)){
+        
+        printf("%s \n",directorio->name);
+        //imprimir los archivos del directorio actual
+        printDirectoryDirS(directorio->firstSibling);
+        printDirectoryDirS(directorio->nextBrother);
+    }
 
-//pos-condición imprime el directorio ejecuando DIR
-void printDirectoryDir (TDirectorio directorio);
-
-
-//pos-condición imprime el directorio ejecutando DIR /S
-void printDirectoryDirS (TDirectorio directorio);
+}
