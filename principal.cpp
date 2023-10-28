@@ -410,7 +410,6 @@ TipoRet TYPE(TDirectorio &sistema, Cadena nombreArchivo)
     {
         if (!isEmptyFile(getFileDirectory(sistema, nombreArchivo)))
         {
-            printf("Existe el archivo\n");
             printFile(sistema, nombreArchivo);
             salida = OK;
         }
