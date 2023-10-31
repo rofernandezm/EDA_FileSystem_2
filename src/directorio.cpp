@@ -380,7 +380,15 @@ TDirectorio firstChildrenDirectory(TDirectorio directorio);
 bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta);
 
 // pos-condición imprime el directorio ejecuando DIR
-void printDirectoryDir(TDirectorio directorio);
+void printDirectoryDir(TDirectorio directorio){
+
+    TDirectorio iter = directorio->firstSibling;
+
+    while (iter != NULL) {
+        printf("%s\n", iter->name);
+        iter = iter->nextBrother;
+    }
+}
 
 // pos-condición imprime el directorio ejecutando DIR /S
 void printDirectoryDirS(TDirectorio directorio){

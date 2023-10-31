@@ -597,7 +597,7 @@ TipoRet DIR(TDirectorio &sistema, Cadena parametroDir)
     }
     else
     {
-        printf("DIR SIN PARAMETRO\n");
+        printDirectoryDir(sistema);
     }
 
     return NO_IMPLEMENTADA;
