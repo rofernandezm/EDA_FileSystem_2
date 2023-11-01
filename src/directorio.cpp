@@ -286,26 +286,27 @@ bool existChildrenDirectory(TDirectorio directorio, Cadena nombreDirectorioHijo)
 
 // pre-condición el directorio de nombre nombreDirectorioHijo es hijo del directorio Directorio
 // pos-condición retorna un puntero al directorio de nombre nombreDirectorioHijo
-TDirectorio moveChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorioHijo){
-    
-        TDirectorio hijo = directorio->firstSibling;
-        while (strcmp(hijo->name, nombreDirectorioHijo) != 0)
-        {
-            hijo = hijo->nextBrother;
-        }
-        directorio->currentDirectory = hijo;
-        return hijo;
-        
-    
+TDirectorio moveChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorioHijo)
+{
+
+    TDirectorio hijo = directorio->firstSibling;
+    while (strcmp(hijo->name, nombreDirectorioHijo) != 0)
+    {
+        hijo = hijo->nextBrother;
+    }
+    directorio->currentDirectory = hijo;
+    return hijo;
 }
 
 // retorna un puntero de TDirectorio al padre del directorio directorio
-TDirectorio moveFatherDirectory(TDirectorio &directorio){
+TDirectorio moveFatherDirectory(TDirectorio &directorio)
+{
     return directorio->father;
 }
 
 // retorna un puntero de TDirectorio al directorio ROOT
-TDirectorio moveRootDirectory(TDirectorio &directorio){
+TDirectorio moveRootDirectory(TDirectorio &directorio)
+{
     return directorio->raiz;
 }
 
@@ -324,37 +325,51 @@ bool isRootDirectory(TDirectorio directorio)
 
 // Pre-Condición del directorio de nombre nombreDirectorio no es hijo del directorio "directorio"
 // pos-condición crea un directorio vacío, de nombre nombreDirectorio, hijo del directorio "directorio"
-void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio) {
+void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
+{
     Cadena name = new char[strlen(nombreDirectorio) + 1];
     name = strcpy(name, nombreDirectorio);
 
-    TDirectorio nuevo = new _rep_directorio;
-    nuevo->name = name;
-    nuevo->firstSibling = NULL;
-    nuevo->father = directorio;
-    nuevo->nextBrother = NULL;
+    TDirectorio newDir = new _rep_directorio;
+    newDir->name = name;
+    newDir->firstSibling = NULL;
+    newDir->father = directorio;
+    newDir->nextBrother = NULL;
 
-    if (!isEmptyDirectory(directorio)) {
-        TDirectorio iter = directorio->firstSibling;
-
-        if (strcmp(iter->name, nombreDirectorio) > 0) {
-            nuevo->nextBrother = directorio->firstSibling;
-            directorio->firstSibling = nuevo;
-            printf("directorio.cpp::createChildrenDirectory::Inserto al inicio del dir::%s\n", directorio->currentDirectory->name);
-        } else {
-            while (iter->nextBrother != NULL && strcmp(iter->nextBrother->name, nombreDirectorio) > 0) {
-                iter = iter->nextBrother;
-            }
-            nuevo->nextBrother = iter->nextBrother;
-            iter->nextBrother = nuevo;
-            printf("directorio.cpp::createChildrenDirectory::Se insertó en la mitad del directorio::%s\n", directorio->currentDirectory->name);
-        }
-    } else {
-        directorio->firstSibling = nuevo;
-        printf("directorio.cpp::createChildrenDirectory::else directorio:: %s\n", directorio->currentDirectory->name);
+    TDirectorio iter = directorio->firstSibling;
+    if (isEmptyDirectory(directorio) || strcmp(nombreDirectorio, iter->name) < 0)
+    {
+        newDir->nextBrother = iter;
+        directorio->firstSibling = newDir;
+        // printf("directorio.cpp::createChildrenDirectory::Inserto al inicio del dir::%s\n", directorio->currentDirectory->name);
     }
-}
+    else
+    {
+        bool notInserted = true;
+        while (iter->nextBrother != NULL && notInserted)
+        {
+            if (strcmp(nombreDirectorio, iter->nextBrother->name) < 0)
+            {
+                newDir->nextBrother = iter->nextBrother;
+                iter->nextBrother = newDir;
+                notInserted = false;
+                // printf("directorio.cpp::createChildrenDirectory::Se insertó en la mitad del directorio::%s\n", directorio->currentDirectory->name);
+            }
+            iter = iter->nextBrother;
+        }
 
+        if (notInserted && iter->nextBrother == NULL)
+        {
+            newDir->nextBrother = iter->nextBrother;
+            iter->nextBrother = newDir;
+            // printf("directorio.cpp::createChildrenDirectory::Se insertó en el final del directorio::%s\n", directorio->currentDirectory->name);
+        }
+    }
+
+    name = NULL;
+    newDir = NULL;
+    iter = NULL;
+}
 
 // pre-condición el directorio de nombre nombreDirectorio es hijo del directorio directorio
 // pos-condición elimina el directorio de nombre nombreDirectorio que es hijo del directorio directorio
@@ -380,24 +395,49 @@ TDirectorio firstChildrenDirectory(TDirectorio directorio);
 bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta);
 
 // pos-condición imprime el directorio ejecuando DIR
-void printDirectoryDir(TDirectorio directorio){
+void printDirectoryDir(TDirectorio directorio)
+{
+    printf("%s\n", directorio->name);
+    if (!isEmptyDirectory(directorio))
+    {
+        TDirectorio iter = directorio->firstSibling;
+        while (iter != NULL)
+        {
+            printf("%s/%s\n", directorio->name, iter->name);
+            iter = iter->nextBrother;
+        }
+    }
+    else
+    {
+        printf("No existen archivos ni directorios.\n");
+    }
+}
 
-    TDirectorio iter = directorio->firstSibling;
+//Auxiliar para imprimir archivos del directorio "directorio" con el formato directorio->name/archivo->name
+void printFilesNameInCurrentDirectory(TDirectorio directorio)
+{
+    printf("%s\n", directorio->name);
+    if (!isEmptyDirectory(directorio))
+    {
+        LArchivos files = directorio->archivos;
 
-    while (iter != NULL) {
-        printf("%s\n", iter->name);
-        iter = iter->nextBrother;
+        while (files != NULL)
+        {
+            printf("%s/%s\n", directorio->name, getFileName(files->file));
+            files = files->sig;
+        }
     }
 }
 
 // pos-condición imprime el directorio ejecutando DIR /S
-void printDirectoryDirS(TDirectorio directorio){
-    if(!isEmptyDirectory(directorio->nextBrother)){
-        
-        printf("%s \n",directorio->name);
-        //imprimir los archivos del directorio actual
+void printDirectoryDirS(TDirectorio directorio)
+{
+    if (!isEmptyDirectory(directorio->nextBrother))
+    {
+
+        printf("%s \n", directorio->name);
+        // imprimir los archivos del directorio actual
         printDirectoryDirS(directorio->firstSibling);
         printDirectoryDirS(directorio->nextBrother);
     }
-
 }

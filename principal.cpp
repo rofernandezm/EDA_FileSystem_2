@@ -580,7 +580,6 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
 
 TipoRet DIR(TDirectorio &sistema, Cadena parametroDir)
 {
-
     if (strlen(parametroDir) > 0)
     {
         for (int ind = 0; parametroDir[ind] != '\0'; ++ind)
@@ -600,5 +599,5 @@ TipoRet DIR(TDirectorio &sistema, Cadena parametroDir)
         printDirectoryDir(sistema);
     }
 
-    return NO_IMPLEMENTADA;
+    return OK;
 }
