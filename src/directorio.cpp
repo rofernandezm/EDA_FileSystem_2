@@ -279,24 +279,17 @@ void destroyTArchivos(LArchivos &archivos)
 // pos-condicion destruye toda la memoria de directorio
 void destroyDirectory(TDirectorio &directorio)
 {
-    if (directorio != NULL)
-    {
-        if(!isEmptyDirectory(directorio)){
-            destroyTArchivos(directorio->archivos);
+        directorio->currentDirectory = directorio;
+        if(directorio->currentDirectory->firstSibling != NULL && directorio->currentDirectory->firstSibling->nextBrother != NULL && directorio->currentDirectory->firstSibling->archivos != NULL){
+            destroyDirectory(directorio->currentDirectory->firstSibling);
+            destroyDirectory(directorio->currentDirectory->nextBrother);
+            destroyTArchivos(directorio->currentDirectory->archivos);
         }
-        destroyDirectory(directorio->firstSibling);
-        destroyDirectory(directorio->nextBrother);
-        delete directorio;
-        // if (directorio->firstSibling == NULL)
-        // {
-        //     destroyTArchivos(directorio->archivos);
-        // }
-        // else
-        // {
-        //     destroyDirectory(directorio->firstSibling);
-        // }
-    }
-}
+
+        printf("Estoy en el else, borro %s", directorio->currentDirectory->name);
+        delete directorio->currentDirectory;
+    
+} 
 
 //******************************Nuevas funciones *****************************************************************
 
@@ -413,8 +406,11 @@ void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
 // pre-condición el directorio de nombre nombreDirectorio es hijo del directorio directorio
 // pos-condición elimina el directorio de nombre nombreDirectorio que es hijo del directorio directorio
 // eliminando toda su memoria
-void removeChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio);
-
+void removeChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio){
+    directorio = moveChildrenDirectory(directorio,nombreDirectorio);
+    printf("%s", directorio->name);
+    destroyDirectory(directorio);
+}
 // pre-condición el directorio origen es sub-directorio del directorio "directorio"
 // pos-condición mueve el directorio origen y todo su contenido al directorio destino
 void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &destino);

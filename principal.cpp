@@ -605,7 +605,30 @@ TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 
 TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 {
-    return NO_IMPLEMENTADA;
+    
+    TipoRet salida;
+    if (!strcmp(nombreDirectorio, "RAIZ") == 0)
+    
+    {
+        if (existChildrenDirectory(sistema, nombreDirectorio))
+        {
+            
+            removeChildrenDirectory(sistema, nombreDirectorio);
+            salida = OK;
+        }
+        else
+        {
+            // IMPRIMIR DETALLE ERROR, YA EXISTE
+            salida = ERROR;
+        }
+    }
+    else
+    {
+        // IMPRIMIR DETALLE ERROR, NOMBREDIR = RAIZ
+
+        salida = ERROR;
+    }
+    return salida;
 }
 
 TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
