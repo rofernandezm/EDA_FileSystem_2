@@ -538,7 +538,42 @@ TipoRet DESTRUIRSISTEMA(TDirectorio &sistema)
 
 TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
 {
-    return NO_IMPLEMENTADA;
+    TipoRet salida;
+    if (strcasecmp(nombreDirectorio, "RAIZ") == 0)
+    {
+        if (!isRootDirectory(sistema))
+        {
+            sistema = moveRootDirectory(sistema);
+        }
+        salida = OK;
+    }
+    else if (strcasecmp(nombreDirectorio, "..") == 0)
+    {
+        if (isRootDirectory(sistema))
+        {
+            printf("El directorio actual es RAIZ.\n\n");
+            salida = ERROR;
+        }
+        else
+        {
+            sistema = moveFatherDirectory(sistema);
+            salida = OK;
+        }
+    }
+    else
+    {
+        if (!existChildrenDirectory(sistema, nombreDirectorio))
+        {
+            printf("No existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombreDirectorio);
+            salida = ERROR;
+        }
+        else
+        {
+            sistema = moveChildrenDirectory(sistema, nombreDirectorio);
+            salida = OK;
+        }
+    }
+    return salida;
 }
 
 TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
@@ -588,11 +623,9 @@ TipoRet DIR(TDirectorio &sistema, Cadena parametroDir)
         }
     }
 
-    if (strcmp(parametroDir, "/S") == 0)
+    if (strcmp(parametroDir, "/S") == 0 || strcmp(parametroDir, "/s") == 0)
     {
         printDirectoryDirS(sistema);
-        // printf("DIR CON PARAMETRO\n");
-        //  printf("PARAMETRO: \"%s\"\n", parametroDir);
     }
     else
     {
