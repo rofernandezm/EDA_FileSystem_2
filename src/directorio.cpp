@@ -279,15 +279,24 @@ void destroyTArchivos(LArchivos &archivos)
 // pos-condicion destruye toda la memoria de directorio
 void destroyDirectory(TDirectorio &directorio)
 {
+        printf("Me llego %s \n",directorio->name);
+        if(directorio != NULL){    
         directorio->currentDirectory = directorio;
-        if(directorio->currentDirectory->firstSibling != NULL && directorio->currentDirectory->firstSibling->nextBrother != NULL && directorio->currentDirectory->firstSibling->archivos != NULL){
+        printf("PRE IF %s \n",directorio->name);
+        if(directorio->currentDirectory->firstSibling != NULL || directorio->currentDirectory->nextBrother != NULL){
+            if(directorio->currentDirectory->archivos != NULL)
+                destroyTArchivos(directorio->currentDirectory->archivos);
+            
+
+            printf("Entre al if %s \n",directorio->name);  
             destroyDirectory(directorio->currentDirectory->firstSibling);
-            destroyDirectory(directorio->currentDirectory->nextBrother);
-            destroyTArchivos(directorio->currentDirectory->archivos);
+            destroyDirectory(directorio->firstSibling->nextBrother);
+            
+        }
+        printf("Pre delete %s \n ",directorio->currentDirectory->name);
+        delete directorio;
         }
 
-        printf("Estoy en el else, borro %s", directorio->currentDirectory->name);
-        delete directorio->currentDirectory;
     
 } 
 
@@ -407,9 +416,12 @@ void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
 // pos-condición elimina el directorio de nombre nombreDirectorio que es hijo del directorio directorio
 // eliminando toda su memoria
 void removeChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio){
-    directorio = moveChildrenDirectory(directorio,nombreDirectorio);
+    directorio->currentDirectory = moveChildrenDirectory(directorio,nombreDirectorio);
+    directorio->father->nextBrother = directorio->nextBrother;
     printf("%s", directorio->name);
-    destroyDirectory(directorio);
+
+    destroyDirectory(directorio->currentDirectory);
+    directorio->currentDirectory = directorio;
 }
 // pre-condición el directorio origen es sub-directorio del directorio "directorio"
 // pos-condición mueve el directorio origen y todo su contenido al directorio destino
