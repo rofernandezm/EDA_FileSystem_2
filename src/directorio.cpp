@@ -459,7 +459,42 @@ TDirectorio firstChildrenDirectory(TDirectorio directorio)
 }
 
 // Retorna true si el directorio subdir es sub-directorio del directorio "directorio" en cualquier nivel.
-bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta);
+bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta)
+{
+    Cadena destino = new char[strlen(ruta)];
+    destino = strcpy(destino, ruta);
+    bool flag = true;
+    bool rtn = false;
+    destino = strtok(destino, "/");
+
+    while (destino != NULL && flag)
+    {
+
+        if (existChildrenDirectory(directorio, destino))
+        {
+            printf("isSubDirectoryRoot::Destino: %s\n", destino);
+            directorio = moveChildrenDirectory(directorio, destino);
+            destino = strtok(NULL, "/");
+        }
+        else
+        {
+            flag = false;
+        }
+    }
+    if (flag)
+    {
+        Cadena destinoFinal = destino != NULL ? strtok(NULL, " ") : NULL;
+
+        rtn = destinoFinal == NULL ? existChildrenDirectory(directorio, destino) : existChildrenDirectory(directorio, destinoFinal);
+        if (destinoFinal == NULL)
+            printf("isSubDirectoryRoot::Destino: %s\n", destino);
+        else
+            printf("isSubDirectoryRoot::Destino: %s\n", destinoFinal);
+        delete destinoFinal;
+    }
+
+    return rtn;
+}
 // return DESPUES VEMOS
 
 // Auxiliar para imprimir permisos

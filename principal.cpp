@@ -626,6 +626,9 @@ TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 
 TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
 {
+    //isSubDirectoryRoot(sistema,directorioDestino);
+    
+    printf("Retorno = %d\n",isSubDirectoryRoot(sistema,directorioDestino));
     return NO_IMPLEMENTADA;
 }
 
