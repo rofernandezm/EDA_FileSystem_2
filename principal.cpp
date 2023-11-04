@@ -145,7 +145,7 @@ int main()
             {
                 TipoRet salida = CREATE(sistema, nombrearchivo);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                 {
                     printf("NO_IMPLEMENTADA\n\n");
@@ -162,7 +162,7 @@ int main()
             {
                 TipoRet salida = DELETE(sistema, nombrearchivo);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -177,7 +177,7 @@ int main()
             {
                 TipoRet salida = ATTRIB(sistema, nombrearchivo, parametro);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -192,7 +192,7 @@ int main()
             {
                 TipoRet salida = IF(sistema, nombrearchivo, texto);
                 if (salida == OK)
-                    printf("\nOK\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -207,7 +207,7 @@ int main()
             {
                 TipoRet salida = IN(sistema, nombrearchivo, texto);
                 if (salida == OK)
-                    printf("\nOK\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -222,7 +222,7 @@ int main()
             {
                 TipoRet salida = DF(sistema, nombrearchivo, cantidad);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n");
             }
@@ -237,7 +237,7 @@ int main()
             {
                 TipoRet salida = TYPE(sistema, nombrearchivo);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -252,7 +252,7 @@ int main()
             {
                 TipoRet salida = CD(sistema, nombreDirectorio);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -267,7 +267,7 @@ int main()
             {
                 TipoRet salida = MKDIR(sistema, nombreDirectorio);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -282,7 +282,7 @@ int main()
             {
                 TipoRet salida = RMDIR(sistema, nombreDirectorio);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -297,7 +297,7 @@ int main()
             {
                 TipoRet salida = MOVE(sistema, nombrearchivo, nombreDirectorio);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -312,7 +312,7 @@ int main()
             {
                 TipoRet salida = DIR(sistema, parametroDir);
                 if (salida == OK)
-                    printf("\nOK\n\n");
+                    printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
                     printf("NO_IMPLEMENTADA\n\n");
             }
@@ -385,7 +385,7 @@ TipoRet DELETE(TDirectorio &sistema, Cadena nombreArchivo)
         }
         else
         {
-            printf("*** ERROR PERMISO DENEGADO - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
+            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
             salida = ERROR;
         }
     }
@@ -435,7 +435,7 @@ TipoRet IF(TDirectorio &sistema, Cadena nombreArchivo, Cadena texto)
         }
         else
         {
-            printf("*** ERROR PERMISO DENEGADO - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
+            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
             salida = ERROR;
         }
     }
@@ -468,7 +468,7 @@ TipoRet IN(TDirectorio &sistema, Cadena nombreArchivo, Cadena texto)
         }
         else
         {
-            printf("*** ERROR PERMISO DENEGADO - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
+            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
             salida = ERROR;
         }
     }
@@ -518,7 +518,7 @@ TipoRet TYPE(TDirectorio &sistema, Cadena nombreArchivo)
         }
         else
         {
-            printf("*** El archivo parámetro no posee contenido.\n\n");
+            printf("*** ERROR - El archivo parámetro no posee contenido.\n\n");
             salida = ERROR;
         }
     }
@@ -551,7 +551,7 @@ TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
     {
         if (isRootDirectory(sistema))
         {
-            printf("El directorio actual es RAIZ.\n\n");
+            printf("*** ERROR - El directorio actual es RAIZ.\n\n");
             salida = ERROR;
         }
         else
@@ -564,7 +564,7 @@ TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
     {
         if (!existChildrenDirectory(sistema, nombreDirectorio))
         {
-            printf("No existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombreDirectorio);
+            printf("*** ERROR - No existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombreDirectorio);
             salida = ERROR;
         }
         else
@@ -578,10 +578,8 @@ TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
 
 TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 {
-
     TipoRet salida;
     if (!strcmp(nombreDirectorio, "RAIZ") == 0)
-
     {
         if (!existChildrenDirectory(sistema, nombreDirectorio))
         {
@@ -590,14 +588,13 @@ TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
         }
         else
         {
-            // IMPRIMIR DETALLE ERROR, YA EXISTE
+            printf("*** ERROR - Ya existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombreDirectorio);
             salida = ERROR;
         }
     }
     else
     {
-        // IMPRIMIR DETALLE ERROR, NOMBREDIR = RAIZ
-
+        printf("*** ERROR - No es posible crear un subdirectorio con el nombre \"RAIZ\".\n\n");
         salida = ERROR;
     }
     return salida;
@@ -605,27 +602,23 @@ TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 
 TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 {
-    
     TipoRet salida;
     if (!strcmp(nombreDirectorio, "RAIZ") == 0)
-    
     {
         if (existChildrenDirectory(sistema, nombreDirectorio))
         {
-            
             removeChildrenDirectory(sistema, nombreDirectorio);
             salida = OK;
         }
         else
         {
-            // IMPRIMIR DETALLE ERROR, YA EXISTE
+            printf("*** ERROR - No existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombreDirectorio);
             salida = ERROR;
         }
     }
     else
     {
-        // IMPRIMIR DETALLE ERROR, NOMBREDIR = RAIZ
-
+        printf("*** ERROR - No es posible eliminar el directorio \"RAIZ\".\n\n");
         salida = ERROR;
     }
     return salida;

@@ -33,8 +33,8 @@ char *getFileName(TArchivo archivo)
     int length = strlen(archivo->name) + strlen(archivo->ext) + 1;
     Cadena name = new char[length];
     name = strcpy(name, archivo->name);
-    strcat(name, ".");
-    strcat(name, archivo->ext);
+    name = strcat(name, ".");
+    name = strcat(name, archivo->ext);
     return name;
 }
 
@@ -96,10 +96,10 @@ int getCountChars(TArchivo archivo)
     int rows = getCountRow(archivo);
     if (rows > 0)
     {
-        TFila currentRow = archivo->fila; // changed
+        TFila currentRow = archivo->fila;
         while (rows > 0)
         {
-            rtn += countNodesLine(headRow(currentRow)); // Changed
+            rtn += countNodesLine(headRow(currentRow));
             currentRow = nextRow(currentRow);
             rows--;
         }
@@ -242,7 +242,6 @@ TFila firstRowFile(TArchivo archivo)
 // Inserta el texto "texto" como una nueva fila al comienzo del archivo
 void insertChartsNewRow(TArchivo &archivo, Cadena texto)
 {
-
     Cadena textCopy = new char[strlen(texto)];
     textCopy = strcpy(textCopy, texto);
 
@@ -254,7 +253,6 @@ void insertChartsNewRow(TArchivo &archivo, Cadena texto)
 
     while (largo > 0)
     {
-        // VER NUEVO NODO
         insertCharLine(textCopy[largo], auxL);
         largo--;
     }

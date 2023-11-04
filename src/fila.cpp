@@ -31,17 +31,6 @@ bool isEmptyRow(TFila fila)
     return fila == NULL;
 }
 
-// TLinea copyLine(TLinea linea)
-// {
-//     TLinea newLine = createLine();
-//     while (!isEmptyLine(linea))
-//     {
-//         insertCharLine(firstCharLine(linea), newLine);
-//         linea = nextLine(linea);
-//     }
-//     return newLine;
-// }
-
 // Pos-Condición Inserta una nueva fila al principio de "fila"
 void insertRow(TFila &fila, TLinea linea)
 {
@@ -124,14 +113,12 @@ void deleteRows(TFila &fila)
 // Pos-Condición modifica el primer elemento de la fila "fila" agregando los caracteres al inicio del primer elemento "linea" de la fila.
 void modifyRow(TFila &fila, Cadena caracteres)
 {
-
     if (fila->elemento != NULL)
     {
         Cadena aux = new char[strlen(caracteres)];
         aux = strcpy(aux, caracteres);
 
         TLinea auxL = headRow(fila);
-
         int largo = strlen(aux) - 1;
         while (largo > 0)
         {

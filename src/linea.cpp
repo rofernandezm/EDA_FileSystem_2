@@ -15,11 +15,11 @@ struct _rep_linea
 };
 
 // Pos-condicion: Crea una linea vacía
-TLinea createLine() // CELDA DUMMY
+TLinea createLine()
 {
     TLinea newLinea = new _rep_linea;
     newLinea->sig = NULL;
-    return newLinea; // changed
+    return newLinea;
 }
 
 // pos-condicion: Retorna true si la linea "linea" es vacia
@@ -44,7 +44,6 @@ TLinea nextLine(TLinea linea)
 // Inserta el caracter letra al inicio de la linea.
 void insertCharLine(char letra, TLinea &linea)
 {
-
     TLinea newLinea = new _rep_linea;
     newLinea->elemento = letra;
     newLinea->sig = linea->sig;
