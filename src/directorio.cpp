@@ -149,35 +149,39 @@ void createFileInDirectory(TDirectorio &directorio, Cadena nombreArchivo)
     }
 }
 
+/*VER DE BORRAR*/
+
 // pre-condición: Archivo != NULL y la cantidad de filas de "Archivo" debe ser >= index
 // pos-condición: Devuelve la fila indicada por el entero "index"
-TFila getRowByIndex(TArchivo archivo, int index)
-{
-    TFila currentRow = firstRowFile(archivo);
-    int acc = 1;
-    while (acc != index)
-    {
-        currentRow = nextRow(currentRow);
-        acc++;
-    }
-    return currentRow;
-}
+// TFila getRowByIndex(TArchivo archivo, int index)
+// {
+//     TFila currentRow = firstRowFile(archivo);
+//     int acc = 1;
+//     while (acc != index)
+//     {
+//         currentRow = nextRow(currentRow);
+//         acc++;
+//     }
+//     return currentRow;
+// }
+
+/*VER DE BORRAR*/
 
 // pre-condition: archivo != NULL
-TFila getLastRow(TArchivo archivo)
-{
-    TFila rtn = firstRowFile(archivo);
-    while (!isEmptyRow(nextRow(rtn)))
-    {
-        TLinea curr = nextLine(headRow(rtn));
-        while (curr != NULL)
-        {
-            curr = nextLine(curr);
-        }
-        rtn = nextRow(rtn);
-    }
-    return rtn;
-}
+// TFila getLastRow(TArchivo archivo)
+// {
+//     TFila rtn = firstRowFile(archivo);
+//     while (!isEmptyRow(nextRow(rtn)))
+//     {
+//         TLinea curr = nextLine(headRow(rtn));
+//         while (curr != NULL)
+//         {
+//             curr = nextLine(curr);
+//         }
+//         rtn = nextRow(rtn);
+//     }
+//     return rtn;
+// }
 
 // pre condicion: el archivo nombreArchivo existe en directorio
 // pos-condicion: inserta una nueva fila al comienzo del archivo nombreArchivo conteniendo los chars texto
