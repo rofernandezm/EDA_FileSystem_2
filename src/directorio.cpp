@@ -442,11 +442,17 @@ void removeChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
 }
 // pre-condición el directorio origen es sub-directorio del directorio "directorio"
 // pos-condición mueve el directorio origen y todo su contenido al directorio destino
-void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &destino);
+void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &destino)
+{
+    printf("FALTA IMPLEMENTAR\n\n");
+}
 
 // pre-condición el archivo origen es sub archivo del directorio directorio
 // pos-condición se mueve el archivo TArchivo como hijo del directorio destino
-void moveSubArchive(TDirectorio &directorio, TArchivo origen, TDirectorio destino);
+void moveSubArchive(TDirectorio &directorio, TArchivo origen, TDirectorio destino)
+{
+    printf("FALTA IMPLEMENTAR\n\n");
+}
 
 // pre-condición: directorio no es el directorio ROOT
 // pos-condición: retorna un puntero al primer hermano del diretorio "directorio"
@@ -569,7 +575,7 @@ void printFilesNameInCurrentDirectoryDirS(TDirectorio directorio)
         }
         if (trace != NULL)
         {
-            delete trace;
+            delete[] trace;
             trace = NULL;
         }
         files = NULL;
@@ -583,7 +589,7 @@ void printDirectoryDir(TDirectorio directorio)
     {
         Cadena trace = getRootTrace(directorio);
         printf("%s\n", trace);
-        delete trace;
+        delete[] trace;
     }
     else
     {
@@ -617,7 +623,7 @@ void printSubDirectoriesDirS(TDirectorio directorio)
         printSubDirectoriesDirS(directorio->nextBrother);
         if (trace != NULL)
         {
-            delete trace;
+            delete[] trace;
         }
     }
 }
@@ -652,7 +658,7 @@ void printDirectoryDirS(TDirectorio directorio)
         }
         if (trace != NULL)
         {
-            delete trace;
+            delete[] trace;
         }
     }
 }

@@ -64,7 +64,7 @@ int main()
     char nombrearchivo[MAX_NOMBRE];
     char nombreDirectorio[MAX_NOMBRE];
     char cantidad[MAX_PALABRA];
-    // char parametro;
+    char ruta[MAX_RUTA];
     TDirectorio sistema;
     int sistemaInicializado = false;
     bool salir = false;
@@ -116,7 +116,7 @@ int main()
         else if (!strcmp(comando, "MOVE"))
         {
             leerChars(nombrearchivo);
-            leerChars(nombreDirectorio);
+            leerChars(ruta);
         }
         else if (!strcmp(comando, "DIR"))
         {
@@ -295,7 +295,7 @@ int main()
         {
             if (sistemaInicializado)
             {
-                TipoRet salida = MOVE(sistema, nombrearchivo, nombreDirectorio);
+                TipoRet salida = MOVE(sistema, nombrearchivo, ruta);
                 if (salida == OK)
                     printf("OK\n\n");
                 else if (salida == NO_IMPLEMENTADA)
@@ -626,10 +626,116 @@ TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 
 TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
 {
-    //isSubDirectoryRoot(sistema,directorioDestino);
-    
-    printf("Retorno = %d\n",isSubDirectoryRoot(sistema,directorioDestino));
-    return NO_IMPLEMENTADA;
+    TipoRet salida;
+    TArchivo fileToMove;
+    TDirectorio directoryToMove;
+    // struct para guardar directorios de la ruta
+    typedef struct trace
+    {
+        Cadena currDir;
+        trace *sig;
+    } *Trace;
+
+    // Verifica si es
+    bool isFile = false;
+    int ind = 0;
+    while (!isFile && nombre[ind] != '\0')
+    {
+        isFile = nombre[ind] == '.';
+        ind++;
+    }
+
+    // Obteniendo directorios
+    // Se crea copia de ruta
+    Cadena dirName = new char[strlen(directorioDestino)];
+    dirName = strcpy(dirName, directorioDestino);
+
+    // Lista de directorios
+    Trace t = new trace;
+    Trace iter = t;
+
+    // Lee primer directorio y copia en el primer nodo de la lista
+    dirName = strtok(dirName, "/");
+    iter->currDir = new char[strlen(dirName)];
+    iter->currDir = strcpy(iter->currDir, dirName);
+
+    while (dirName != NULL)
+    {
+        dirName = strtok(NULL, "/");
+        if (dirName != NULL)
+        {
+            // Crea un nuevo nodo y copia el nombre del directorio
+            iter->sig = new trace;
+            iter = iter->sig;
+            iter->currDir = new char[strlen(dirName)];
+            iter->currDir = strcpy(iter->currDir, dirName);
+        }
+        else
+        {
+            iter->sig = NULL;
+        }
+    }
+
+    TDirectorio auxRoot = sistema;
+    // Verifica que exista el directorio de destino
+    if (!isSubDirectoryRoot(moveRootDirectory(auxRoot), directorioDestino))
+    {
+        printf("*** ERROR - No existe el directorio de destino \"%s\".\n\n", iter->currDir);
+        salida = ERROR;
+    }
+    // VER SI SE NECESITA FUNCION PARA SABER NOMBRE DE DIRECTORIO O HACER LA BUSQUEDA DE DIRECTORIO DESTINO ANTES
+    // else if (!isFile && existChildrenDirectory(sistema, nombre)) // En caso de ser directorio, verifica que no sea subdirectorio del actual
+    // {
+    else if (!isFile && isSubDirectoryRoot(sistema, iter->currDir)) // En caso de ser directorio, verifica que no sea subdirectorio del actual
+    {
+        printf("*** ERROR - El directorio \"%s\" es un subdirectorio del directorio actual.\n\n", iter->currDir);
+        salida = ERROR;
+    }
+    else
+    {
+        if (isFile)
+        {
+            // Verifica si existe el archivo en el directorio actual.
+            if (existFileDirectory(sistema, nombre))
+            {
+                fileToMove = getFileDirectory(sistema, nombre);
+            }
+            else
+            {
+                printf("*** ERROR - No existe el archivo de nombre: \"%s\" en el directorio actual.\n\n", nombre);
+                salida = ERROR;
+            }
+        }
+        else
+        {
+            // Verifica si existe el subdirectorio en el directorio actual.
+            if (existChildrenDirectory(sistema, nombre))
+            {
+                directoryToMove = moveChildrenDirectory(sistema, nombre);
+            }
+            else
+            {
+                printf("*** ERROR - No existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombre);
+                salida = ERROR;
+            }
+        }
+
+        if (salida != ERROR)
+        {
+            TDirectorio destino;
+            // Hacer busqueda de directorio destino
+            if (isFile)
+            {
+                moveSubArchive(sistema, fileToMove, destino);
+            }
+            else
+            {
+                moveSubDirectory(sistema, directoryToMove, destino);
+            }
+        }
+    }
+    // printf("Retorno = %d\n", isSubDirectoryRoot(sistema, directorioDestino));
+    return salida;
 }
 
 TipoRet DIR(TDirectorio &sistema, Cadena parametroDir)
