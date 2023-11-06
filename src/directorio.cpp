@@ -305,6 +305,10 @@ void destroyDirectory(TDirectorio &directorio)
 
 //******************************Nuevas funciones *****************************************************************
 
+Cadena getDirectoryName(TDirectorio directorio){
+    return directorio->name;
+}
+
 // retorna true si el directorio de nombre nombreDierctorioHijo es hijo del directorio "directorio"
 bool existChildrenDirectory(TDirectorio directorio, Cadena nombreDirectorioHijo)
 {
