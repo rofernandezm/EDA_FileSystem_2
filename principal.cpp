@@ -636,8 +636,8 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
         trace *sig;
     } *Trace;
 
-    // Verifica si es
-    bool isFile = false;
+    // Verifica si es archivo o directorio
+     bool isFile = false;
     int ind = 0;
     while (!isFile && nombre[ind] != '\0')
     {
