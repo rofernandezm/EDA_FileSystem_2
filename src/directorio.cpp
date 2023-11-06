@@ -436,7 +436,82 @@ void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &
 // pos-condición se mueve el archivo TArchivo como hijo del directorio destino
 void moveSubArchive(TDirectorio &directorio, TArchivo origen, TDirectorio destino)
 {
-    printf("FALTA IMPLEMENTAR\n\n");
+    LArchivos nodeToMove = directorio->archivos;
+    if (!strcmp(getFileName(nodeToMove->file), getFileName(origen)) == 0)
+    {
+        while (!strcmp(getFileName(nodeToMove->file), getFileName(origen)) == 0)
+        {
+            nodeToMove = nodeToMove->sig;
+        }
+        LArchivos previous = getPreviousFile(directorio->archivos, getFileName(origen));
+        previous->sig = nodeToMove->sig;
+        previous = NULL;
+    }
+    else
+    {
+        directorio->archivos = nodeToMove->sig;
+    }
+
+    LArchivos firstFile = destino->archivos;
+    if (firstFile == NULL || (strcmp(getFileName(origen), getFileName(firstFile->file)) < 0))
+    {
+        nodeToMove->sig = destino->archivos;
+        destino->archivos = nodeToMove;
+    }
+    else if (strcmp(getFileName(origen), getFileName(firstFile->file)) == 0)
+    {
+        nodeToMove->sig = destino->archivos->sig;
+        destino->archivos = nodeToMove;
+        firstFile = NULL;
+    }
+    else
+    {
+        bool notInserted = true;
+        while (firstFile->sig != NULL && notInserted)
+        {
+            if (strcmp(getFileName(origen), getFileName(firstFile->sig->file)) < 0)
+            {
+                if (strcmp(getFileName(origen), getFileName(firstFile->file)) == 0)
+                {
+                    LArchivos previous = getPreviousFile(destino->archivos, getFileName(firstFile->file));
+                    previous->sig = nodeToMove;
+                    nodeToMove->sig = firstFile->sig;
+                    destroyFile(firstFile->file);
+                    delete firstFile;
+                    previous = NULL;
+                }
+                else
+                {
+                    nodeToMove->sig = firstFile->sig;
+                    firstFile->sig = nodeToMove;
+                }
+
+                notInserted = false;
+            }
+            firstFile = firstFile->sig;
+        }
+
+        if (notInserted && firstFile->sig == NULL)
+        {
+            if (strcmp(getFileName(origen), getFileName(firstFile->file)) == 0)
+            {
+                LArchivos previous = getPreviousFile(destino->archivos, getFileName(firstFile->file));
+                previous->sig = nodeToMove;
+                nodeToMove->sig = firstFile->sig;
+                destroyFile(firstFile->file);
+                delete firstFile;
+                previous = NULL;
+            }
+            else
+            {
+                nodeToMove->sig = firstFile->sig;
+                firstFile->sig = nodeToMove;
+            }
+        }
+    }
+
+    nodeToMove = NULL;
+    firstFile = NULL;
 }
 
 // pre-condición: directorio no es el directorio ROOT

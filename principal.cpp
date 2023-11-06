@@ -673,22 +673,24 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
     }
 
     // Verifica que exista el directorio de destino
-    if ((!strcmp(getDirectoryName(moveRootDirectory(sistema)), iter->currDir)==0) && !isSubDirectoryRoot(moveRootDirectory(sistema), directorioDestino))
+    if ((!strcmp(getDirectoryName(moveRootDirectory(sistema)), iter->currDir) == 0) && !isSubDirectoryRoot(moveRootDirectory(sistema), directorioDestino))
     {
         printf("*** ERROR - No existe el directorio de destino \"%s\".\n\n", iter->currDir);
         salida = ERROR;
     }
     else
     {
-        // BUSCAR SUBDIRECTORIO DESTINO. SE PUEDE RE-UTILIZAR "auxRoot" para guardarlo, ademas, al entrar al "else" auxRoot apunta a RAIZ
         TDirectorio dirDestino = moveRootDirectory(sistema);
-        iter = t->sig;
-        while (iter != NULL)
+        // Verifica si directorioDestino == root, sino hace la navegacion
+        if (strcmp(getDirectoryName(dirDestino), iter->currDir))
         {
-            dirDestino = moveChildrenDirectory(dirDestino, iter->currDir);
-            iter = iter->sig;
+            iter = t->sig;
+            while (iter != NULL)
+            {
+                dirDestino = moveChildrenDirectory(dirDestino, iter->currDir);
+                iter = iter->sig;
+            }
         }
-
         if (!isFile && existChildrenDirectory(dirDestino, nombre)) // En caso de ser directorio, verifica que no sea subdirectorio del actual
         {
             printf("*** ERROR - El directorio \"%s\" es un subdirectorio del directorio actual.\n\n", nombre);
@@ -753,7 +755,6 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
         directoryToMove = NULL;
         dirDestino = NULL;
     }
-
     return salida;
 }
 
