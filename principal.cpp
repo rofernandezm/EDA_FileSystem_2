@@ -673,8 +673,7 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
     }
 
     // Verifica que exista el directorio de destino
-    TDirectorio auxRoot = sistema;
-    if (!isSubDirectoryRoot(moveRootDirectory(auxRoot), directorioDestino))
+    if ((!strcmp(getDirectoryName(moveRootDirectory(sistema)), iter->currDir)==0) && !isSubDirectoryRoot(moveRootDirectory(sistema), directorioDestino))
     {
         printf("*** ERROR - No existe el directorio de destino \"%s\".\n\n", iter->currDir);
         salida = ERROR;
@@ -682,10 +681,17 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
     else
     {
         // BUSCAR SUBDIRECTORIO DESTINO. SE PUEDE RE-UTILIZAR "auxRoot" para guardarlo, ademas, al entrar al "else" auxRoot apunta a RAIZ
-        auxRoot = auxRoot;
-        if (!isFile && existChildrenDirectory(auxRoot, nombre)) // En caso de ser directorio, verifica que no sea subdirectorio del actual
+        TDirectorio dirDestino = moveRootDirectory(sistema);
+        iter = t->sig;
+        while (iter != NULL)
         {
-            printf("*** ERROR - El directorio \"%s\" es un subdirectorio del directorio actual.\n\n", iter->currDir);
+            dirDestino = moveChildrenDirectory(dirDestino, iter->currDir);
+            iter = iter->sig;
+        }
+
+        if (!isFile && existChildrenDirectory(dirDestino, nombre)) // En caso de ser directorio, verifica que no sea subdirectorio del actual
+        {
+            printf("*** ERROR - El directorio \"%s\" es un subdirectorio del directorio actual.\n\n", nombre);
             salida = ERROR;
         }
         else
@@ -719,21 +725,35 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
 
             if (salida != ERROR)
             {
-                TDirectorio destino = auxRoot;
-                // Hacer busqueda de directorio destino
                 if (isFile)
                 {
-                    moveSubArchive(sistema, fileToMove, destino);
+                    moveSubArchive(sistema, fileToMove, dirDestino);
+                    salida = OK;
                 }
                 else
                 {
-                    moveSubDirectory(sistema, directoryToMove, destino);
+                    moveSubDirectory(sistema, directoryToMove, dirDestino);
+                    salida = OK;
                 }
             }
         }
+
+        // Liberando memoria utilizada
+        delete[] dirName;
+
+        while (t != NULL)
+        {
+            iter = t;
+            t = t->sig;
+            delete[] iter->currDir;
+            delete iter;
+        }
+
+        fileToMove = NULL;
+        directoryToMove = NULL;
+        dirDestino = NULL;
     }
 
-    // printf("Retorno = %d\n", isSubDirectoryRoot(sistema, directorioDestino));
     return salida;
 }
 

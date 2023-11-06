@@ -149,40 +149,6 @@ void createFileInDirectory(TDirectorio &directorio, Cadena nombreArchivo)
     }
 }
 
-/*VER DE BORRAR*/
-
-// pre-condición: Archivo != NULL y la cantidad de filas de "Archivo" debe ser >= index
-// pos-condición: Devuelve la fila indicada por el entero "index"
-// TFila getRowByIndex(TArchivo archivo, int index)
-// {
-//     TFila currentRow = firstRowFile(archivo);
-//     int acc = 1;
-//     while (acc != index)
-//     {
-//         currentRow = nextRow(currentRow);
-//         acc++;
-//     }
-//     return currentRow;
-// }
-
-/*VER DE BORRAR*/
-
-// pre-condition: archivo != NULL
-// TFila getLastRow(TArchivo archivo)
-// {
-//     TFila rtn = firstRowFile(archivo);
-//     while (!isEmptyRow(nextRow(rtn)))
-//     {
-//         TLinea curr = nextLine(headRow(rtn));
-//         while (curr != NULL)
-//         {
-//             curr = nextLine(curr);
-//         }
-//         rtn = nextRow(rtn);
-//     }
-//     return rtn;
-// }
-
 // pre condicion: el archivo nombreArchivo existe en directorio
 // pos-condicion: inserta una nueva fila al comienzo del archivo nombreArchivo conteniendo los chars texto
 void insertTextFile(TDirectorio &directorio, Cadena nombreArchivo, Cadena texto)
@@ -305,7 +271,8 @@ void destroyDirectory(TDirectorio &directorio)
 
 //******************************Nuevas funciones *****************************************************************
 
-Cadena getDirectoryName(TDirectorio directorio){
+Cadena getDirectoryName(TDirectorio directorio)
+{
     return directorio->name;
 }
 
@@ -414,6 +381,8 @@ void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
     iter = NULL;
 }
 
+// Pre-condición: Existe el subdirectorio "nombreDirectorio" en directorio y "nombreDirectorio" no es el primer hijo de directorio
+// Pos-condición: Devuelve el nodo anterior al subdirectorio "nombreDirectorio"
 TDirectorio getPreviousBrother(TDirectorio directorio, Cadena nombreDirectorio)
 {
     TDirectorio rtn = directorio->firstSibling;
@@ -422,6 +391,18 @@ TDirectorio getPreviousBrother(TDirectorio directorio, Cadena nombreDirectorio)
         rtn = rtn->nextBrother;
     }
     return rtn;
+}
+
+// Pre-condición: Existe el archivo "nombreArchivo" en la lista "archivos" en el directorio y "nombreArchivo" no es el primer nodo de la lista
+// Pos-condición: Devuelve el nodo anterior al nodo de la lista que contiene el archivo "nombreArchivo"
+LArchivos getPreviousFile(LArchivos archivos, Cadena nombreArchivo)
+{
+    LArchivos nodoFile = archivos;
+    if (!(strcmp(getFileName(nodoFile->sig->file), nombreArchivo) == 0))
+    {
+        nodoFile = getPreviousFile(archivos->sig, nombreArchivo);
+    }
+    return nodoFile;
 }
 
 // pre-condición el directorio de nombre nombreDirectorio es hijo del directorio directorio
