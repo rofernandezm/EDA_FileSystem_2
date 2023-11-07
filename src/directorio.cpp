@@ -201,6 +201,18 @@ void deleteCharsFile(TDirectorio &directorio, Cadena nombreArchivo, int cantidad
     if (!isEmptyRow(firstRowFile(archivo)))
     {
         deleteCharterFile(archivo, cantidad);
+        /*
+        int totalChars = getCountChars(archivo);
+        if(cantidad>=totalChars)
+        {
+            deleteCharterFile(archivo, cantidad);
+        }
+        else
+        {
+            // Eliminar cantidad iniciales
+        }
+        */
+        
     }
     archivo = NULL;
 }
