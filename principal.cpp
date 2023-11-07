@@ -581,14 +581,22 @@ TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
     TipoRet salida;
     if (!strcmp(nombreDirectorio, "RAIZ") == 0)
     {
-        if (!existChildrenDirectory(sistema, nombreDirectorio))
+        if (!strcmp(nombreDirectorio, "..") == 0)
         {
-            createChildrenDirectory(sistema, nombreDirectorio);
-            salida = OK;
+            if (!existChildrenDirectory(sistema, nombreDirectorio))
+            {
+                createChildrenDirectory(sistema, nombreDirectorio);
+                salida = OK;
+            }
+            else
+            {
+                printf("*** ERROR - Ya existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombreDirectorio);
+                salida = ERROR;
+            }
         }
         else
         {
-            printf("*** ERROR - Ya existe el subdirectorio de nombre: \"%s\" en el directorio actual.\n\n", nombreDirectorio);
+            printf("*** ERROR - No es posible crear un subdirectorio con el nombre \"%s\".\n\n", nombreDirectorio);
             salida = ERROR;
         }
     }
@@ -637,7 +645,7 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
     } *Trace;
 
     // Verifica si es archivo o directorio
-     bool isFile = false;
+    bool isFile = false;
     int ind = 0;
     while (!isFile && nombre[ind] != '\0')
     {
@@ -672,32 +680,34 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
         }
     }
 
-    // Verifica que exista el directorio de destino
-    if ((!strcmp(getDirectoryName(moveRootDirectory(sistema)), iter->currDir) == 0) && !isSubDirectoryRoot(moveRootDirectory(sistema), directorioDestino))
+    // En caso de ser directorio, verifica que no sea el directorio actual
+    if (!isFile && (strcmp(getDirectoryName(sistema), nombre) == 0))
     {
-        printf("*** ERROR - No existe el directorio de destino \"%s\".\n\n", iter->currDir);
+        printf("*** ERROR - No es posible mover el directorio actual. \"%s\".\n\n", getDirectoryName(sistema));
         salida = ERROR;
     }
     else
     {
-        TDirectorio dirDestino = moveRootDirectory(sistema);
-        // Verifica si directorioDestino == root, sino hace la navegacion
-        if (strcmp(getDirectoryName(dirDestino), iter->currDir))
+        // Verifica que exista el directorio de destino
+        if ((!strcmp(getDirectoryName(moveRootDirectory(sistema)), iter->currDir) == 0) && !isSubDirectoryRoot(moveRootDirectory(sistema), directorioDestino))
         {
-            iter = t->sig;
-            while (iter != NULL)
-            {
-                dirDestino = moveChildrenDirectory(dirDestino, iter->currDir);
-                iter = iter->sig;
-            }
-        }
-        if (!isFile && existChildrenDirectory(dirDestino, nombre)) // En caso de ser directorio, verifica que no sea subdirectorio del actual
-        {
-            printf("*** ERROR - El directorio \"%s\" es un subdirectorio del directorio actual.\n\n", nombre);
+            printf("*** ERROR - No existe el directorio de destino \"%s\".\n\n", iter->currDir);
             salida = ERROR;
         }
         else
         {
+            TDirectorio dirDestino = moveRootDirectory(sistema);
+            // Verifica si directorioDestino == root, sino hace la navegacion
+            if (strcmp(getDirectoryName(dirDestino), iter->currDir))
+            {
+                iter = t->sig;
+                while (iter != NULL)
+                {
+                    dirDestino = moveChildrenDirectory(dirDestino, iter->currDir);
+                    iter = iter->sig;
+                }
+            }
+
             if (isFile)
             {
                 // Verifica si existe el archivo en el directorio actual.
@@ -738,23 +748,22 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
                     salida = OK;
                 }
             }
+            dirDestino = NULL;
         }
-
-        // Liberando memoria utilizada
-        delete[] dirName;
-
-        while (t != NULL)
-        {
-            iter = t;
-            t = t->sig;
-            delete[] iter->currDir;
-            delete iter;
-        }
-
-        fileToMove = NULL;
-        directoryToMove = NULL;
-        dirDestino = NULL;
     }
+    // Liberando memoria utilizada
+    delete[] dirName;
+
+    while (t != NULL)
+    {
+        iter = t;
+        t = t->sig;
+        delete[] iter->currDir;
+        delete iter;
+    }
+
+    fileToMove = NULL;
+    directoryToMove = NULL;
     return salida;
 }
 

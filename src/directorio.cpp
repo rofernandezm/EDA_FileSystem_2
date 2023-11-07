@@ -429,7 +429,74 @@ void removeChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
 // pos-condición mueve el directorio origen y todo su contenido al directorio destino
 void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &destino)
 {
-    printf("FALTA IMPLEMENTAR\n\n");
+    if (directorio->firstSibling != origen)
+    {
+        TDirectorio previous = getPreviousBrother(directorio, origen->name);
+        previous->nextBrother = origen->nextBrother;
+        previous = NULL;
+    }
+    else
+    {
+        directorio->firstSibling = origen->nextBrother;
+    }
+
+    TDirectorio firstSibling = destino->firstSibling;
+    if (firstSibling == NULL || (strcmp(origen->name, firstSibling->name) < 0))
+    {
+        origen->nextBrother = firstSibling;
+        destino->firstSibling = origen;
+    }
+    else if (strcmp(origen->name, firstSibling->name) == 0)
+    {
+        origen->nextBrother = firstSibling->nextBrother;
+        destino->firstSibling = origen;
+        destroyDirectory(firstSibling);
+    }
+    else
+    {
+        bool notInserted = true;
+        while (firstSibling->nextBrother != NULL && notInserted)
+        {
+            if (strcmp(origen->name, firstSibling->nextBrother->name) < 0)
+            {
+                if (strcmp(origen->name, firstSibling->name) == 0)
+                {
+                    TDirectorio previous = getPreviousBrother(directorio, origen->name);
+                    previous->nextBrother = origen;
+                    origen->nextBrother = firstSibling->nextBrother;
+                    destroyDirectory(firstSibling);
+                    previous = NULL;
+                }
+                else
+                {
+                    origen->nextBrother = firstSibling->nextBrother;
+                    firstSibling->nextBrother = origen;
+                }
+
+                notInserted = false;
+            }
+            firstSibling = firstSibling->nextBrother;
+        }
+
+        if (notInserted && firstSibling->nextBrother == NULL)
+        {
+            if (strcmp(origen->name, firstSibling->name) == 0)
+            {
+                TDirectorio previous = getPreviousBrother(directorio, origen->name);
+                previous->nextBrother = origen;
+                origen->nextBrother = firstSibling->nextBrother;
+                destroyDirectory(firstSibling);
+                previous = NULL;
+            }
+            else
+            {
+                origen->nextBrother = firstSibling->nextBrother;
+                firstSibling->nextBrother = origen;
+            }
+        }
+    }
+    origen->father = destino;
+    firstSibling = NULL;
 }
 
 // pre-condición el archivo origen es sub archivo del directorio directorio
@@ -460,9 +527,10 @@ void moveSubArchive(TDirectorio &directorio, TArchivo origen, TDirectorio destin
     }
     else if (strcmp(getFileName(origen), getFileName(firstFile->file)) == 0)
     {
-        nodeToMove->sig = destino->archivos->sig;
+        nodeToMove->sig = firstFile->sig;
         destino->archivos = nodeToMove;
-        firstFile = NULL;
+        destroyFile(firstFile->file);
+        delete firstFile;
     }
     else
     {
