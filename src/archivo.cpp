@@ -103,6 +103,7 @@ int getCountChars(TArchivo archivo)
             currentRow = nextRow(currentRow);
             rows--;
         }
+        currentRow = NULL;
     }
     return rtn;
 }
@@ -127,6 +128,8 @@ void printLineFile(TArchivo archivo, int numero_linea)
         printf("%c", firstCharLine(currentLine));
         currentLine = nextLine(currentLine);
     }
+
+    currentRow = NULL;
 }
 
 // Elimina los cant cantidad de caracteres finales del "archivo"
@@ -139,6 +142,7 @@ void deleteCharterFile(TArchivo &archivo, int cant)
         TFila auxFirstRow = firstRowFile(archivo);
         archivo->fila = NULL;
         deleteRows(auxFirstRow);
+        auxFirstRow = NULL;
     }
     else
     {
@@ -209,6 +213,8 @@ void insertChartsFirstRow(TArchivo &archivo, Cadena texto)
         largo--;
     }
 
+    delete[] textCopy;
+    textCopy = NULL;
     auxL = NULL;
     textCopy = NULL;
 }
@@ -257,6 +263,8 @@ void insertChartsNewRow(TArchivo &archivo, Cadena texto)
         largo--;
     }
 
+    delete[] textCopy;
+    textCopy = NULL;
     newLine = NULL;
     auxL = NULL;
 }

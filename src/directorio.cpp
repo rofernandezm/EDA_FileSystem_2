@@ -6,6 +6,10 @@
 #include "../include/directorio.h"
 #include <string.h>
 #include <stdio.h>
+#define READ_PERMISSION "Lectura"
+#define WRITE_PERMISSION "Lectura/Escritura"
+#define ROOT_NAME "RAIZ"
+#define SLASH "/"
 
 typedef struct _list_archivo *LArchivos;
 
@@ -33,8 +37,8 @@ TDirectorio createRootDirectory()
     TDirectorio root = new _rep_directorio();
 
     // Set the memory to the "name" pointer
-    root->name = new char[strlen("RAIZ")];
-    root->name = strcpy(root->name, "RAIZ");
+    root->name = new char[strlen(ROOT_NAME)];
+    root->name = strcpy(root->name, ROOT_NAME);
     root->father = NULL;
     root->firstSibling = NULL;
     root->archivos = NULL;
@@ -47,8 +51,8 @@ TDirectorio createRootDirectory()
 // retorna true si el directorio "directorio" no tiene archivos
 bool isEmptyDirectory(TDirectorio directorio)
 {
-    bool rtn = directorio->archivos == NULL; //&& directorio->firstSibling == NULL && directorio->nextBrother == NULL;
-    return rtn;                              // LArchivo archivos;
+    bool rtn = directorio->archivos == NULL;
+    return rtn;
 }
 
 // pos-condicion: retorna true si el archivo de nombre "nombreArchivo existe en la lista de archivos "archivos".
@@ -76,7 +80,7 @@ bool existFileDirectory(TDirectorio directorio, Cadena nombreArchivo)
     return existFileInLArchivos(directorio->archivos, nombreArchivo);
 }
 
-// pre-condicion existe el archivo de nombre nombreArchivo en lista de archivos "archivos"
+// pre-condicion: existe el archivo de nombre nombreArchivo en lista de archivos "archivos"
 // pos-condicion: retorna un puntero al archivo de nombre "nombreArchivo"
 TArchivo getFileInLArchivos(LArchivos archivos, Cadena nombreArchivo)
 {
@@ -88,7 +92,7 @@ TArchivo getFileInLArchivos(LArchivos archivos, Cadena nombreArchivo)
     return file;
 }
 
-// pre-condicion existe el archivo de nombre nombreArchivo en el directorio "directorio"
+// pre-condicion: existe el archivo de nombre nombreArchivo en el directorio "directorio"
 // pos-condicion: retorna un puntero al archivo de nombre "nombreArchivo"
 TArchivo getFileDirectory(TDirectorio directorio, Cadena nombreArchivo)
 {
@@ -143,23 +147,24 @@ void createFileInDirectory(TDirectorio &directorio, Cadena nombreArchivo)
         // Cleaning used pointers
         files = NULL;
         newFile = NULL;
+
+        delete[] param;
         param = NULL;
         name = NULL;
         ext = NULL;
     }
 }
 
-// pre condicion: el archivo nombreArchivo existe en directorio
+// pre-condicion: el archivo nombreArchivo existe en directorio
 // pos-condicion: inserta una nueva fila al comienzo del archivo nombreArchivo conteniendo los chars texto
 void insertTextFile(TDirectorio &directorio, Cadena nombreArchivo, Cadena texto)
 {
     TArchivo archivo = getFileDirectory(directorio, nombreArchivo);
-
     insertChartsNewRow(archivo, texto);
     archivo = NULL;
 }
 
-// pre condicion: el archivo nombreArchivo existe en directorio
+// pre-condicion: el archivo nombreArchivo existe en directorio
 // pos-condicion: agrega al comienzo de la primera fila del archivo de nombre nombreArchivo los caracteres de texto
 // desplazando los caracteres existentes hacia la derecha
 void insertCharsFileFirstLine(TDirectorio &directorio, Cadena nombreArchivo, Cadena texto)
@@ -167,6 +172,9 @@ void insertCharsFileFirstLine(TDirectorio &directorio, Cadena nombreArchivo, Cad
     TArchivo archivo = getFileDirectory(directorio, nombreArchivo); // Tengo el archivo
     TFila fila = firstRowFile(archivo);
     modifyRow(fila, texto);
+
+    archivo = NULL;
+    fila = NULL;
 }
 
 // pre-condicion: existe el archivo de nombre "nombreArchivo" en el directorio "directorio"
@@ -201,18 +209,6 @@ void deleteCharsFile(TDirectorio &directorio, Cadena nombreArchivo, int cantidad
     if (!isEmptyRow(firstRowFile(archivo)))
     {
         deleteCharterFile(archivo, cantidad);
-        /*
-        int totalChars = getCountChars(archivo);
-        if(cantidad>=totalChars)
-        {
-            deleteCharterFile(archivo, cantidad);
-        }
-        else
-        {
-            // Eliminar cantidad iniciales
-        }
-        */
-        
     }
     archivo = NULL;
 }
@@ -237,6 +233,7 @@ void printFile(TDirectorio &directorio, Cadena nombreArchivo)
         printLineFile(file, ind);
         printf("\n");
     }
+    file = NULL;
 }
 
 // pos-condicion: destruye toda la memoria de LArchivos "archivos"
@@ -249,10 +246,10 @@ void destroyTArchivos(LArchivos &archivos)
             destroyTArchivos(archivos->sig);
         }
         destroyFile(archivos->file);
-        delete archivos;
     }
 }
 
+// pos-condicion: destruye toda la memoria de directorio
 void destroyChildrenDirectory(TDirectorio &directorio)
 {
     if (directorio != NULL)
@@ -267,7 +264,7 @@ void destroyChildrenDirectory(TDirectorio &directorio)
     }
 }
 
-// pos-condicion destruye toda la memoria de directorio
+// pos-condicion: destruye toda la memoria de directorio
 void destroyDirectory(TDirectorio &directorio)
 {
     if (directorio != NULL)
@@ -281,14 +278,15 @@ void destroyDirectory(TDirectorio &directorio)
     }
 }
 
-//******************************Nuevas funciones *****************************************************************
-
+// pre-condicion: directorio != NULL
+// pos-condicion: retorna el nombre de directorio
 Cadena getDirectoryName(TDirectorio directorio)
 {
     return directorio->name;
 }
 
-// retorna true si el directorio de nombre nombreDierctorioHijo es hijo del directorio "directorio"
+// pre-condicion: directorio != NULL
+// pos-condicion: retorna true si el directorio de nombre nombreDierctorioHijo es hijo del directorio "directorio"
 bool existChildrenDirectory(TDirectorio directorio, Cadena nombreDirectorioHijo)
 {
     bool rtn = false;
@@ -307,8 +305,8 @@ bool existChildrenDirectory(TDirectorio directorio, Cadena nombreDirectorioHijo)
     return rtn;
 }
 
-// pre-condición el directorio de nombre nombreDirectorioHijo es hijo del directorio Directorio
-// pos-condición retorna un puntero al directorio de nombre nombreDirectorioHijo
+// pre-condicion: el directorio de nombre nombreDirectorioHijo es hijo del directorio Directorio
+// pos-condicion: retorna un puntero al directorio de nombre nombreDirectorioHijo
 TDirectorio moveChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorioHijo)
 {
     TDirectorio hijo = directorio->firstSibling;
@@ -336,7 +334,7 @@ TDirectorio moveRootDirectory(TDirectorio &directorio)
 bool isRootDirectory(TDirectorio directorio)
 {
     bool rtn = false;
-    if (strcmp(directorio->name, "RAIZ") == 0)
+    if (strcmp(directorio->name, ROOT_NAME) == 0)
     {
         rtn = true;
     }
@@ -344,8 +342,8 @@ bool isRootDirectory(TDirectorio directorio)
     return rtn;
 }
 
-// Pre-Condición del directorio de nombre nombreDirectorio no es hijo del directorio "directorio"
-// pos-condición crea un directorio vacío, de nombre nombreDirectorio, hijo del directorio "directorio"
+// pre-Condición del directorio de nombre nombreDirectorio no es hijo del directorio "directorio"
+// pos-condicion crea un directorio vacío, de nombre nombreDirectorio, hijo del directorio "directorio"
 void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
 {
     Cadena name = new char[strlen(nombreDirectorio) + 1];
@@ -363,7 +361,6 @@ void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
     {
         newDir->nextBrother = iter;
         directorio->firstSibling = newDir;
-        // printf("directorio.cpp::createChildrenDirectory::Inserto al inicio del dir::%s\n", directorio->currentDirectory->name);
     }
     else
     {
@@ -375,7 +372,6 @@ void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
                 newDir->nextBrother = iter->nextBrother;
                 iter->nextBrother = newDir;
                 notInserted = false;
-                // printf("directorio.cpp::createChildrenDirectory::Se insertó en la mitad del directorio::%s\n", directorio->currentDirectory->name);
             }
             iter = iter->nextBrother;
         }
@@ -384,7 +380,6 @@ void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
         {
             newDir->nextBrother = iter->nextBrother;
             iter->nextBrother = newDir;
-            // printf("directorio.cpp::createChildrenDirectory::Se insertó en el final del directorio::%s\n", directorio->currentDirectory->name);
         }
     }
 
@@ -393,8 +388,8 @@ void createChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
     iter = NULL;
 }
 
-// Pre-condición: Existe el subdirectorio "nombreDirectorio" en directorio y "nombreDirectorio" no es el primer hijo de directorio
-// Pos-condición: Devuelve el nodo anterior al subdirectorio "nombreDirectorio"
+// pre-condicion: Existe el subdirectorio "nombreDirectorio" en directorio y "nombreDirectorio" no es el primer hijo de directorio
+// pos-condicion: Devuelve el nodo anterior al subdirectorio "nombreDirectorio"
 TDirectorio getPreviousBrother(TDirectorio directorio, Cadena nombreDirectorio)
 {
     TDirectorio rtn = directorio->firstSibling;
@@ -405,8 +400,8 @@ TDirectorio getPreviousBrother(TDirectorio directorio, Cadena nombreDirectorio)
     return rtn;
 }
 
-// Pre-condición: Existe el archivo "nombreArchivo" en la lista "archivos" en el directorio y "nombreArchivo" no es el primer nodo de la lista
-// Pos-condición: Devuelve el nodo anterior al nodo de la lista que contiene el archivo "nombreArchivo"
+// pre-condicion: Existe el archivo "nombreArchivo" en la lista "archivos" en el directorio y "nombreArchivo" no es el primer nodo de la lista
+// pos-condicion: Devuelve el nodo anterior al nodo de la lista que contiene el archivo "nombreArchivo"
 LArchivos getPreviousFile(LArchivos archivos, Cadena nombreArchivo)
 {
     LArchivos nodoFile = archivos;
@@ -417,28 +412,28 @@ LArchivos getPreviousFile(LArchivos archivos, Cadena nombreArchivo)
     return nodoFile;
 }
 
-// pre-condición el directorio de nombre nombreDirectorio es hijo del directorio directorio
-// pos-condición elimina el directorio de nombre nombreDirectorio que es hijo del directorio directorio
+// pre-condicion: el directorio de nombre nombreDirectorio es hijo del directorio directorio
+// pos-condicion: elimina el directorio de nombre nombreDirectorio que es hijo del directorio directorio
 // eliminando toda su memoria
 void removeChildrenDirectory(TDirectorio &directorio, Cadena nombreDirectorio)
 {
     directorio->currentDirectory = moveChildrenDirectory(directorio, nombreDirectorio);
-    // Borrado logico
     if (!strcmp(directorio->firstSibling->name, nombreDirectorio) == 0)
     {
         TDirectorio anterior = getPreviousBrother(directorio, nombreDirectorio);
         anterior->nextBrother = directorio->currentDirectory->nextBrother;
+        anterior = NULL;
     }
     else
     {
         directorio->firstSibling = directorio->currentDirectory->nextBrother;
     }
-    // printf("%s", directorio->name);
     destroyDirectory(directorio->currentDirectory);
     directorio->currentDirectory = directorio;
 }
-// pre-condición el directorio origen es sub-directorio del directorio "directorio"
-// pos-condición mueve el directorio origen y todo su contenido al directorio destino
+
+// pre-condicion: el directorio origen es sub-directorio del directorio "directorio"
+// pos-condicion: mueve el directorio origen y todo su contenido al directorio destino
 void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &destino)
 {
     if (directorio->firstSibling != origen)
@@ -511,8 +506,8 @@ void moveSubDirectory(TDirectorio &directorio, TDirectorio origen, TDirectorio &
     firstSibling = NULL;
 }
 
-// pre-condición el archivo origen es sub archivo del directorio directorio
-// pos-condición se mueve el archivo TArchivo como hijo del directorio destino
+// pre-condicion el archivo origen es sub archivo del directorio directorio
+// pos-condicion se mueve el archivo TArchivo como hijo del directorio destino
 void moveSubArchive(TDirectorio &directorio, TArchivo origen, TDirectorio destino)
 {
     LArchivos nodeToMove = directorio->archivos;
@@ -594,15 +589,15 @@ void moveSubArchive(TDirectorio &directorio, TArchivo origen, TDirectorio destin
     firstFile = NULL;
 }
 
-// pre-condición: directorio no es el directorio ROOT
-// pos-condición: retorna un puntero al primer hermano del diretorio "directorio"
+// pre-condicion: directorio no es el directorio ROOT
+// pos-condicion: retorna un puntero al primer hermano del diretorio "directorio"
 TDirectorio firstBrotherDirectory(TDirectorio directorio)
 {
     return directorio->nextBrother;
 }
 
-// pre-condición: Directorio != NULL
-//  pos-condición: retorna un puntero al primer hijo del directorio "directorio"
+// pre-condicion: Directorio != NULL
+// pos-condicion: retorna un puntero al primer hijo del directorio "directorio"
 TDirectorio firstChildrenDirectory(TDirectorio directorio)
 {
     return directorio->firstSibling;
@@ -618,10 +613,10 @@ bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta)
     destino = strcpy(destino, ruta);
 
     // Lee primer directorio
-    destino = strtok(destino, "/");
+    destino = strtok(destino, SLASH);
 
     // En caso de coincidir el primer directorio de la ruta con el actual, avanza al siguiente
-    destino = strcmp(destino, directorio->name) == 0 ? strtok(NULL, "/") : destino;
+    destino = strcmp(destino, directorio->name) == 0 ? strtok(NULL, SLASH) : destino;
 
     bool flag = true;
     while (destino != NULL && flag)
@@ -629,7 +624,7 @@ bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta)
         if (existChildrenDirectory(directorio, destino))
         {
             directorio = moveChildrenDirectory(directorio, destino);
-            destino = strtok(NULL, "/");
+            destino = strtok(NULL, SLASH);
             rtn = destino == NULL;
         }
         else
@@ -638,17 +633,21 @@ bool isSubDirectoryRoot(TDirectorio directorio, Cadena ruta)
         }
     }
 
+    delete[] destino;
+    destino = NULL;
     return rtn;
 }
 
-// Auxiliar para imprimir permisos
+// Auxiliar para imprimir permisos del archivo "archivo"
 Cadena getTextOfPermission(TArchivo archivo)
 {
-    Cadena rtn = haveWritePermission(archivo) ? new char[strlen("Lectura/Escritura") + 1] : new char[strlen("Lectura") + 1];
-    rtn = haveWritePermission(archivo) ? strcpy(rtn, "Lectura/Escritura") : strcpy(rtn, "Lectura");
+    Cadena rtn = haveWritePermission(archivo) ? new char[strlen(WRITE_PERMISSION) + 1] : new char[strlen(READ_PERMISSION) + 1];
+    rtn = haveWritePermission(archivo) ? strcpy(rtn, WRITE_PERMISSION) : strcpy(rtn, READ_PERMISSION);
     return rtn;
 }
 
+// pre-condicion: directorio != NULL
+// pos-condicion: retorna una cadena conteniendo la ruta de "directorio"
 Cadena getRootTrace(TDirectorio directorio)
 {
     int length;
@@ -659,7 +658,7 @@ Cadena getRootTrace(TDirectorio directorio)
         length = strlen(rtn) + strlen(directorio->name) + 1;
         trace = new char[length];
         trace = strcpy(trace, rtn);
-        trace = strcat(trace, "/");
+        trace = strcat(trace, SLASH);
         trace = strcat(trace, directorio->name);
     }
     else
@@ -687,7 +686,7 @@ void printFilesNameInCurrentDirectoryDir(TDirectorio directorio)
     }
 }
 
-// PARA PARAMETRO /S
+// pre-condicion: directorio != NULL
 // Auxiliar para imprimir archivos del directorio "directorio" con el formato directorio->name/archivo->name
 void printFilesNameInCurrentDirectoryDirS(TDirectorio directorio)
 {
@@ -700,7 +699,6 @@ void printFilesNameInCurrentDirectoryDirS(TDirectorio directorio)
         }
 
         LArchivos files = directorio->archivos;
-
         while (files != NULL)
         {
             if (!isRootDirectory(directorio))
@@ -722,7 +720,7 @@ void printFilesNameInCurrentDirectoryDirS(TDirectorio directorio)
     }
 }
 
-// pos-condición imprime el directorio ejecuando DIR
+// pos-condicion: imprime el directorio ejecuando DIR
 void printDirectoryDir(TDirectorio directorio)
 {
     if (!isRootDirectory(directorio))
@@ -752,6 +750,7 @@ void printDirectoryDir(TDirectorio directorio)
     }
 }
 
+// pos-condicion: imprime los hijos y hermanos de directorio
 void printSubDirectoriesDirS(TDirectorio directorio)
 {
     if (directorio != NULL)
@@ -768,7 +767,7 @@ void printSubDirectoriesDirS(TDirectorio directorio)
     }
 }
 
-// pos-condición imprime el directorio ejecutando DIR /S
+// pos-condicion: imprime el directorio ejecutando DIR /S
 void printDirectoryDirS(TDirectorio directorio)
 {
     if (isRootDirectory(directorio))

@@ -27,6 +27,10 @@ Intérprete de comandos para probar los módulos.
 #define MAX_NOMBRE 15
 #define MAX_EXTENSION 3
 #define TEXTO_MAX 50
+#define READ_PERMISSION "Lectura"
+#define ROOT_NAME "RAIZ"
+#define SLASH "/"
+#define LEVELUP_COMMAND ".."
 
 enum _retorno
 {
@@ -37,7 +41,6 @@ enum _retorno
 typedef enum _retorno TipoRet;
 typedef char *Cadena;
 
-// Testtt
 TipoRet CREARSISTEMA(TDirectorio &s);
 TipoRet CREATE(TDirectorio &sistema, char *nombreArchivo);
 TipoRet DELETE(TDirectorio &sistema, char *nombreArchivo);
@@ -385,7 +388,7 @@ TipoRet DELETE(TDirectorio &sistema, Cadena nombreArchivo)
         }
         else
         {
-            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
+            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"%s\".\n\n", nombreArchivo, READ_PERMISSION);
             salida = ERROR;
         }
     }
@@ -435,7 +438,7 @@ TipoRet IF(TDirectorio &sistema, Cadena nombreArchivo, Cadena texto)
         }
         else
         {
-            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
+            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"%s\".\n\n", nombreArchivo, READ_PERMISSION);
             salida = ERROR;
         }
     }
@@ -468,7 +471,7 @@ TipoRet IN(TDirectorio &sistema, Cadena nombreArchivo, Cadena texto)
         }
         else
         {
-            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
+            printf("*** ERROR - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"%s\".\n\n", nombreArchivo, READ_PERMISSION);
             salida = ERROR;
         }
     }
@@ -494,7 +497,7 @@ TipoRet DF(TDirectorio &sistema, Cadena nombreArchivo, Cadena cantidad)
         }
         else
         {
-            printf("*** ERROR PERMISO DENEGADO - El archivo con el nombre: \"%s\" unicamente posee permisos del tipo \"Lectura\".\n\n", nombreArchivo);
+            printf("*** ERROR PERMISO DENEGADO - El archivo con el nombre: \"%s\" posee unicamente permisos del tipo \"%s\".\n\n", nombreArchivo, READ_PERMISSION);
             salida = ERROR;
         }
     }
@@ -539,7 +542,7 @@ TipoRet DESTRUIRSISTEMA(TDirectorio &sistema)
 TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
 {
     TipoRet salida;
-    if (strcasecmp(nombreDirectorio, "RAIZ") == 0)
+    if (strcasecmp(nombreDirectorio, ROOT_NAME) == 0)
     {
         if (!isRootDirectory(sistema))
         {
@@ -547,11 +550,11 @@ TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
         }
         salida = OK;
     }
-    else if (strcasecmp(nombreDirectorio, "..") == 0)
+    else if (strcasecmp(nombreDirectorio, LEVELUP_COMMAND) == 0)
     {
         if (isRootDirectory(sistema))
         {
-            printf("*** ERROR - El directorio actual es RAIZ.\n\n");
+            printf("*** ERROR - El directorio actual es \"%s\".\n\n", ROOT_NAME);
             salida = ERROR;
         }
         else
@@ -579,9 +582,9 @@ TipoRet CD(TDirectorio &sistema, Cadena nombreDirectorio)
 TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 {
     TipoRet salida;
-    if (!strcmp(nombreDirectorio, "RAIZ") == 0)
+    if (!strcmp(nombreDirectorio, ROOT_NAME) == 0)
     {
-        if (!strcmp(nombreDirectorio, "..") == 0)
+        if (!strcmp(nombreDirectorio, LEVELUP_COMMAND) == 0)
         {
             if (!existChildrenDirectory(sistema, nombreDirectorio))
             {
@@ -602,7 +605,7 @@ TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
     }
     else
     {
-        printf("*** ERROR - No es posible crear un subdirectorio con el nombre \"RAIZ\".\n\n");
+        printf("*** ERROR - No es posible crear un subdirectorio con el nombre \"%s\".\n\n", ROOT_NAME);
         salida = ERROR;
     }
     return salida;
@@ -611,7 +614,7 @@ TipoRet MKDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
 {
     TipoRet salida;
-    if (!strcmp(nombreDirectorio, "RAIZ") == 0)
+    if (!strcmp(nombreDirectorio, ROOT_NAME) == 0)
     {
         if (existChildrenDirectory(sistema, nombreDirectorio))
         {
@@ -626,7 +629,7 @@ TipoRet RMDIR(TDirectorio &sistema, Cadena nombreDirectorio)
     }
     else
     {
-        printf("*** ERROR - No es posible eliminar el directorio \"RAIZ\".\n\n");
+        printf("*** ERROR - No es posible eliminar el directorio \"%s\".\n\n", ROOT_NAME);
         salida = ERROR;
     }
     return salida;
@@ -663,13 +666,13 @@ TipoRet MOVE(TDirectorio &sistema, Cadena nombre, Cadena directorioDestino)
     Trace iter = t;
 
     // Lee primer directorio y copia en el primer nodo de la lista
-    dirName = strtok(dirName, "/");
+    dirName = strtok(dirName, SLASH);
     iter->currDir = new char[strlen(dirName)];
     iter->currDir = strcpy(iter->currDir, dirName);
 
     while (dirName != NULL)
     {
-        dirName = strtok(NULL, "/");
+        dirName = strtok(NULL, SLASH);
         if (dirName != NULL)
         {
             // Crea un nuevo nodo y copia el nombre del directorio

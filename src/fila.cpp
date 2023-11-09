@@ -92,7 +92,6 @@ void deleteRows(TFila &fila)
 {
     if (fila != NULL)
     {
-
         while (fila->sig != NULL)
         {
             TFila auxDelete = fila;
